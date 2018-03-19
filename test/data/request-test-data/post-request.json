@@ -1,0 +1,28 @@
+{
+  "swaggerDefinitionName":"AccountRequest",
+  "httpMethod":"POST",
+  "hostURL":"http://j2-ob-cnf-account-request-data-api-master.lbg.eu-gb.mybluemix.net",
+  "endPointPath": "/account-request-data/v1.0/accounts-requests",
+  "requestHeader":{
+    "x-lbg-txn-correlation-id":"Unique transaction Id",
+    "x-lbg-internal-user-id":"Galaxy internal user Id",
+    "x-lbg-internal-user-role":"SYSTEM",
+    "x-fapi-financial-id":"1234",
+    "x-fapi-interaction-id":"1234",
+    "x-lbg-client-id":"test",
+    "Content-Type":"application/json",
+    "Accept": "application/json"
+  },
+  "requestPayload": {
+    "Data": {
+      "Permissions": [
+        "ReadBeneficiariesDetail",
+        "ReadDirectDebits"
+      ],
+      "ExpirationDateTime": "2019-06-01T09:24:30.975Z",
+      "TransactionFromDateTime": "2017-06-01T09:24:30.975Z",
+      "TransactionToDateTime": "2017-06-01T09:24:30.975Z"
+    },
+    "Risk": {}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "swaggerDefinitionName":"AccountRequestResponse",
+  "httpMethod": "GET",
+  "hostURL":"http://j2-ob-cnf-account-request-data-api-master.lbg.eu-gb.mybluemix.net",
+  "endPointPath": "/account-request-data/v1.0/accounts-requests/d2027da6-a056-44e6-b43d-d0bcedbd1c2d",
+  "requestHeader":{
+    "x-lbg-txn-correlation-id":"Unique transaction Id",
+    "x-lbg-internal-user-id":"Galaxy internal user Id",
+    "x-lbg-internal-user-role":"SYSTEM",
+    "x-fapi-financial-id":"1234",
+    "x-fapi-interaction-id":"1234",
+    "x-lbg-client-id":"test",
+    "Accept": "application/json"
+  }
+}

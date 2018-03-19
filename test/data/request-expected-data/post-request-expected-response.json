@@ -1,0 +1,24 @@
+{
+    "httpResponseStatusCode":201,
+    "payload":{
+        "Data": {
+            "Status": "AwaitingAuthorisation",
+            "Permissions": [
+                {
+                    "Code": "ReadBeneficiariesDetail",
+                    "Description": "Payment references and account details of your saved payees",
+                    "SectionHeader": "Regular payments and payees"
+                },
+                {
+                    "Code": "ReadDirectDebits",
+                    "Description": "Summary of your direct debits",
+                    "SectionHeader": "Regular payments and payees"
+                }
+            ],
+            "TransactionToDateTime": "2017-06-01T09:24:30.975Z",
+            "ExpirationDateTime": "2019-06-01T09:24:30.975Z",
+            "TransactionFromDateTime": "2017-06-01T09:24:30.975Z"
+        },
+        "Risk": {}
+    }
+}

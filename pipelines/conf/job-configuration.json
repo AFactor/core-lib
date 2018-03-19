@@ -1,0 +1,64 @@
+{
+  "journey": "ob-aisp",
+  "packaging": {
+  	"npm_options": ""
+  },
+  "nexus": {
+    "url": "http://nexus.sandbox.extranet.group/nexus/content/repositories/npm-internal/"
+  },
+  "git": {
+     "creds_id": "83e374e2-2bb6-4479-9d16-5c73169a1109"
+  },
+  "sonar": {
+     "exclusions": "lib/**,**/pipelines/**,Jenkinsfile,specs/**,tests/**,node_modules/**,central-scripts/**,coverage/**,server/**,tests/**,gulp/**,specs/**,gulpfile.js,index.js,enum/**",
+     "coverage_exclusions": "lib/**, **/pipelines/**,Jenkinsfile,specs/**,tests/**,node_modules/**,central-scripts/**,coverage/**,server/server.js,**/app.jsx,**/*spec.js,tests/**,server/**,gulp/**,**/gulpfile.js,specs/**,enum/**",
+     "quality_gate": "OB-AISP-API-QG",
+     "server_id": "SONAR-main"
+  },
+  "splunk": {
+    "reportdir": "/apps/splunkreports/ob-aisp-web-bdd",
+    "differentdir": "Cant see a structure",
+    "host": "10.113.140.187"
+  },
+  "bdd": {
+    "invocation": " gulp wdio-aisp-sanity",
+    "git_repo": "http://gerrit.sandbox.extranet.group/ob-aisp-bdd",
+    "git_default_branch": "master"
+  },
+  "sauce": {
+    "credentials": {
+	    "daily": "SAUCELABS_PCA_DAY"
+    }
+  },
+  "defaults" : {
+    "tag": "B92"
+  },
+  "bluemix": {
+    "domain": "lbg.eu-gb.bluemix.net",
+    "api": "api.lbg.eu-gb.bluemix.net",
+	  "credentials": "bluemix-global-deployer"
+  },
+  "passthresholds": {
+    "bdd": {
+      "percent_scenarios": "90"
+    }
+  },
+  "environments": {
+     "release" : {
+     "disk": "512M",
+     "memory": "512M",
+	   "bluemix": {
+	       "org": "POC47_PSD2AISP",
+	       "env": "Test"
+		      }
+	 	   },
+      "master": {
+        "disk": "512M",
+        "memory": "512M",
+        "bluemix": {
+          "org": "POC47_PSD2AISP",
+          "env": "DEV"
+        }
+      }
+		}
+}

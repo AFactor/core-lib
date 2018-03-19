@@ -1,0 +1,9 @@
+applications:
+- name: TOKEN_APP
+  org: TOKEN_BM_ORG   #change based on your environement
+  space: TOKEN_BM_ENV #change based on your environement
+  disk_quota: TOKEN_DISK
+  memory: TOKEN_MEMORY
+  env:
+    NODE_ENV: TOKEN_NODE_ENV
+    NODE_MODULES_CACHE: false
