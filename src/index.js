@@ -1,6 +1,6 @@
+const path = require('path');
 const Mocha = require('mocha');
 const testDataManager = require('./test-data-manager');
-
 
 class TestRunner {
     constructor() {
@@ -9,7 +9,8 @@ class TestRunner {
         this.runner = new Mocha({
             useColors: 'c'
         });
-        this.runner.addFile('./src/api.spec.js');
+        const specPath =  path.resolve(__dirname, 'api.spec.js');
+        this.runner.addFile(specPath);
     }
 
     run() {
