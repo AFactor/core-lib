@@ -1,12 +1,12 @@
-const jsonLib = require('./utils/json-utility');
-const swaggerLib = require('./utils/swagger-utility');
+const jsonDiff = require('json-diff');
 const expect = require('chai').expect;
 const superTest = require('supertest');
+const jsonLib = require('./utils/json-utility');
+const swaggerLib = require('./utils/swagger-utility');
 const testDataManager = require('./test-data-manager');
-
 describe('Validate the API response and swagger check', function(){
-    testDataManager.data['DataValidation'].forEach(testData => {
-        it('Validate the API response with expected data @DataValidation', function(done){
+    testDataManager.data['DATA_VALIDATION'].forEach(testData => {
+        it('Validate the API response with expected data @DATA_VALIDATION', function(done){
             const server = superTest.agent(testData.requestData.hostURL);
             let intermediateRequest = server[testData.requestData.httpMethod.toLowerCase()](testData.requestData.endPointPath)
              .set(testData.requestData.requestHeader);
@@ -15,20 +15,20 @@ describe('Validate the API response and swagger check', function(){
             }
             intermediateRequest.expect(testData.expectedResponse.httpResponseStatusCode)
                     .end(function(err, res){
-                        jsonLib.isJSONObjectSubset(res.body, testData.expectedResponse.payload).then((isSubset) => {
+                        const isSubset = jsonLib.isJSONObjectSubset(res.body, testData.expectedResponse.payload);
                             if (isSubset){
                                 expect(isSubset).to.be.true;
                                 done();
                             } else {
+                                console.log(jsonDiff.diffString(testData.expectedResponse.payload, res.body));
                                 done(new Error('expected response does not match with actual response'));
                             }
-                        });
                     });
         });
     });
 
-    testDataManager.data['SwaggerValidation'].forEach(testData => {
-        it('Validate API response against the swagger definition @SwaggerValidation', function(done){
+    testDataManager.data['SWAGGER_VALIDATION'].forEach(testData => {
+        it('Validate API response against the swagger definition @SWAGGER_VALIDATION', function(done){
             const server = superTest.agent(testData.requestData.hostURL);
             let intermediateRequest = server[testData.requestData.httpMethod.toLowerCase()](testData.requestData.endPointPath)
                     .set(testData.requestData.requestHeader);

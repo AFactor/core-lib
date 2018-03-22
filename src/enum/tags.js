@@ -1,1 +1,1 @@
-module.exports = ['DataValidation', 'SwaggerValidation'];
+module.exports = ['DATA_VALIDATION', 'SWAGGER_VALIDATION'];
