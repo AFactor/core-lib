@@ -7,19 +7,19 @@ let expectedSwagger = fs.readFileSync(path, 'utf8');
 // Get request
 requestData = require('./data/request-test-data/get-request.json');
 expectedResponse = require('./data/request-expected-data/get-request-expected-response.json') ;
-testRunner.addTest('GET_DataValidation', {requestData, expectedResponse});
-testRunner.addTest('GET_SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
+testRunner.addTest('DataValidation', {requestData, expectedResponse});
+testRunner.addTest('SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
 
 //Post request
 requestData = require('./data/request-test-data/post-request.json');
 expectedResponse = require('./data/request-expected-data/post-request-expected-response.json');
-testRunner.addTest('POST_DataValidation', {requestData, expectedResponse});
-testRunner.addTest('POST_SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
+testRunner.addTest('DataValidation', {requestData, expectedResponse});
+testRunner.addTest('SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
 
 // PUT request
 requestData = require('./data/request-test-data/put-request.json');
 expectedResponse = require('./data/request-expected-data/put-request-expected-response.json');
-testRunner.addTest('PUT_DataValidation', {requestData, expectedResponse});
-testRunner.addTest('PUT_SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
+testRunner.addTest('DataValidation', {requestData, expectedResponse});
+testRunner.addTest('SwaggerValidation', {requestData, expectedSwagger, expectedResponse});
 
 testRunner.run();

@@ -7,7 +7,8 @@ class TestRunner {
         this.runner = null;
         this.tags = '';
         this.runner = new Mocha({
-            useColors: 'c'
+            useColors: 'c',
+            timeout :20000
         });
         const specPath =  path.resolve(__dirname, 'api.spec.js');
         this.runner.addFile(specPath);
