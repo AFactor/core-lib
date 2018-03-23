@@ -1,3 +1,4 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED=0;
 const jsonDiff = require('json-diff');
 const expect = require('chai').expect;
 const superTest = require('supertest');

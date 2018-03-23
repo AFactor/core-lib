@@ -1,0 +1,44 @@
+{
+    "swaggerDefinitionName": "QuoteRequest",
+    "httpMethod": "POST",
+    "hostURL": "https://gatewaydata01.psd2.sandbox.extranet.group/prototype/lloyds-banking-group/lyds",
+    "endPointPath": "/commercial-lending/v1.0/quotes",
+    "requestHeader": {
+      "Authorization":"Bearer AAIkYTQyMTRiZjQtYjVhZi00YTNlLWEwMDAtOGM0ZWUzZTJmZWNhtVRHYU4kzjKiA61wSlF_hVZFPk0bL8pMgWGbJBJbMJntFaZEjfL4UNhYOpBWePyHJZgJP_wdPeDJSHRInWL01nl50kmUCB24XnlKylCpz8gxJOaC9Ra81dHRfHRq7KrAhSrz0CDedOObKrK5NbM0dw",
+      "Content-Type":"application/json",
+      "Accept": "application/json"
+    },
+    "requestPayload": {
+      "title": "Mr",
+      "firstName": "nick",
+      "middleName": "p",
+      "lastName": "angeli",
+      "email": "nicangeli@gmail.com",
+      "businessName": "nick",
+      "businessType": "Sole Trader",
+      "businessActivity": {
+        "value": "0201039",
+        "label": "Tree felling - own account"
+      },
+      "tradingDate": {
+        "month": "10",
+        "year": "2000",
+        "day": "01"
+      },
+      "turnover": 100000,
+      "profit": 200000,
+      "courtJudgments": false,
+      "bankruptcy": false,
+      "disqualifiedDirector": false,
+      "facilitiesApplied": "0",
+      "residentialStatus": "Homeowner",
+      "currentPersonalAccount": false,
+      "isExistingCustomer": false,
+      "productType": "loan",
+      "loanAmount": 1000,
+      "loanTerm": "12",
+      "interestRateType": "base",
+      "customerBrand": "lbg"
+    }
+}
+  

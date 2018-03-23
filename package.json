@@ -1,9 +1,10 @@
 {
   "name": "apie-test-automation-lib",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "src/index.js",
   "scripts": {
     "test": "node test/caller.js",
+    "unit-test": "mocha specs/**/*.spec.js",
     "lint": "eslint 'src/**/*.js' -f table --fix",
     "pretest": "npm run lint"
   },
