@@ -1,6 +1,11 @@
 {
     "httpResponseStatusCode":200,
-    "payload":{
-        "UpdatedStatus": "Authorised"
+    "responseBody":{
+        "body":{
+            "UpdatedStatus": "Authorised"
+        },
+        "headers":{
+            
+        }
     }
 }

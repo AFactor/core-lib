@@ -1,12 +1,14 @@
 {
-    "swaggerDefinitionName": "QuoteRequest",
+    "swaggerDefinitionName": "Quote",
     "httpMethod": "POST",
     "hostURL": "https://gatewaydata01.psd2.sandbox.extranet.group/prototype/lloyds-banking-group/lyds",
     "endPointPath": "/commercial-lending/v1.0/quotes",
     "requestHeader": {
-      "Authorization":"Bearer AAIkYTQyMTRiZjQtYjVhZi00YTNlLWEwMDAtOGM0ZWUzZTJmZWNhtVRHYU4kzjKiA61wSlF_hVZFPk0bL8pMgWGbJBJbMJntFaZEjfL4UNhYOpBWePyHJZgJP_wdPeDJSHRInWL01nl50kmUCB24XnlKylCpz8gxJOaC9Ra81dHRfHRq7KrAhSrz0CDedOObKrK5NbM0dw",
+      "Authorization":"Bearer AAIkYTQyMTRiZjQtYjVhZi00YTNlLWEwMDAtOGM0ZWUzZTJmZWNhkkxXx_khRP470WPxlt3DKssjhp6ItM40uYv6Phda0JqUCc1erynBtLWIpcrFLeEqxnk6thD4iRIewNO8N_UunGW2e7DYK6AlYWUTmIbKFgRn8bWhnNUzGd-8ixrnTg5blitkauuOVKv_QeThCg3L3Q",
       "Content-Type":"application/json",
-      "Accept": "application/json"
+      "Accept": "application/json",
+      "x-lbg-brand":"LYDS",
+      "x-lbg-correlation-id":"123456789"
     },
     "requestPayload": {
       "title": "Mr",
