@@ -11,7 +11,6 @@ testRunner.addTest('DATA_VALIDATION', {requestData, expectedResponse});
 testRunner.addTest('HEADER_VALIDATION', {requestData, expectedResponse});
 testRunner.addTest('SWAGGER_VALIDATION', {requestData, expectedSwagger, expectedResponse});
 
-
 // Get request
 requestData = require('./data/request-test-data/get-request.json');
 expectedResponse = require('./data/request-expected-data/get-request-expected-response.json') ;
