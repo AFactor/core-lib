@@ -16,8 +16,8 @@ function log(requestData, responseData){
     const str = 'Request Data ==================================\n'+ JSON.stringify(request, null, 2) +
     '\n\nResponse Data ==================================\n'+JSON.stringify(response, null, 2) +
     '\n\n***************************************End********************************************\n\n';
-    if (!fs.existsSync(logDir)){
-        fs.mkdirSync(logDir);
+    if (!fs.existsSync(process.env.LOG_DIR)){
+        fs.mkdirSync(process.env.LOG_DIR);
     }
     fs.appendFileSync(`${process.env.LOG_DIR}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
 }
