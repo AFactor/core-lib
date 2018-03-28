@@ -1,4 +1,7 @@
 const fs = require('fs');
+const config = {
+    logDir: process.env.LOG_DIR || 'logs'
+};
 
 function log(requestData, responseData){    
     const request = {
@@ -13,13 +16,14 @@ function log(requestData, responseData){
         'body': responseData.body,
         'headers': responseData.headers
     };
+
     const str = 'Request Data ==================================\n'+ JSON.stringify(request, null, 2) +
     '\n\nResponse Data ==================================\n'+JSON.stringify(response, null, 2) +
     '\n\n***************************************End********************************************\n\n';
-    if (!fs.existsSync(process.env.LOG_DIR)){
-        fs.mkdirSync(process.env.LOG_DIR);
+    if (!fs.existsSync(config.logDir)){
+        fs.mkdirSync(config.logDir);
     }
-    fs.appendFileSync(`${process.env.LOG_DIR}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
+    fs.appendFileSync(`${config.logDir}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
 }
 
 module.exports = {
