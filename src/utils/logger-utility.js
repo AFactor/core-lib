@@ -1,4 +1,5 @@
 const fs = require('fs');
+const logDir = 'logs';
 
 function log(requestData, responseData){
     const request = {
@@ -16,7 +17,6 @@ function log(requestData, responseData){
     const str = 'Request Data ==================================\n'+ JSON.stringify(request, null, 2) +
     '\n\nResponse Data ==================================\n'+JSON.stringify(response, null, 2) +
     '\n\n***************************************End********************************************\n\n';
-    const logDir = 'logs';
     if (!fs.existsSync(logDir)){
         fs.mkdirSync(logDir);
     }
