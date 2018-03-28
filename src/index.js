@@ -1,6 +1,7 @@
 const path = require('path');
 const Mocha = require('mocha');
 const testDataManager = require('./test-data-manager');
+require('dotenv').config();
 
 class TestRunner {
     constructor() {

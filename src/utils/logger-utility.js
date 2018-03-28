@@ -1,7 +1,6 @@
 const fs = require('fs');
-const logDir = 'logs';
 
-function log(requestData, responseData){
+function log(requestData, responseData){    
     const request = {
         'url': requestData.hostURL + requestData.endPointPath,
         'http-method': requestData.httpMethod,
@@ -20,7 +19,7 @@ function log(requestData, responseData){
     if (!fs.existsSync(logDir)){
         fs.mkdirSync(logDir);
     }
-    fs.appendFileSync(`${logDir}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
+    fs.appendFileSync(`${process.env.LOG_DIR}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
 }
 
 module.exports = {
