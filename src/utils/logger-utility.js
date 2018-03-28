@@ -20,7 +20,7 @@ function log(requestData, responseData){
     if (!fs.existsSync(logDir)){
         fs.mkdirSync(logDir);
     }
-    fs.appendFileSync('logs/executionLog.txt', str, {encoding:'utf8', mode:0o666});
+    fs.appendFileSync(`${logDir}/executionLog.txt`, str, {encoding:'utf8', mode:0o666});
 }
 
 module.exports = {
