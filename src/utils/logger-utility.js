@@ -1,19 +1,19 @@
 const fs = require('fs');
 
 function log(requestData, responseData){
-    let request = {
+    const request = {
         'url': requestData.hostURL + requestData.endPointPath,
         'http-method': requestData.httpMethod,
         'headers': requestData.requestHeader,
         'body': requestData.requestPayload
     };
 
-    let response = {
+    const response = {
         'httpStatusCode' : responseData.statusCode,
         'body': responseData.body,
         'headers': responseData.headers
     };
-    let str = 'Request Data ==================================\n'+ JSON.stringify(request, null, 2) +
+    const str = 'Request Data ==================================\n'+ JSON.stringify(request, null, 2) +
     '\n\nResponse Data ==================================\n'+JSON.stringify(response, null, 2) +
     '\n\n***************************************End********************************************\n\n';
     const logDir = 'logs';
