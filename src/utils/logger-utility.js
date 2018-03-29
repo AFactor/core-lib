@@ -4,7 +4,7 @@ const config = {
 };
 
 function log(requestData, responseData){
-    const logDir =  config.logDir;
+    const {logDir} =  config;
     const request = {
         'url': requestData.hostURL + requestData.endPointPath,
         'http-method': requestData.httpMethod,
