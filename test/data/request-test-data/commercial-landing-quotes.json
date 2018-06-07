@@ -4,7 +4,7 @@
     "hostURL": "https://gatewaydata01.psd2.sandbox.extranet.group/prototype/lloyds-banking-group/lyds",
     "endPointPath": "/commercial-lending/v1.0/quotes",
     "requestHeader": {
-      "Authorization":"Bearer AAIkYTQyMTRiZjQtYjVhZi00YTNlLWEwMDAtOGM0ZWUzZTJmZWNhkkxXx_khRP470WPxlt3DKssjhp6ItM40uYv6Phda0JqUCc1erynBtLWIpcrFLeEqxnk6thD4iRIewNO8N_UunGW2e7DYK6AlYWUTmIbKFgRn8bWhnNUzGd-8ixrnTg5blitkauuOVKv_QeThCg3L3Q",
+      "Authorization":"Bearer AAIkYTQyMTRiZjQtYjVhZi00YTNlLWEwMDAtOGM0ZWUzZTJmZWNhQjcz9LBanAMm3CoAamfkmd0QNXinpFWrVoWX-ETt-IbYRITYcZTr4r1M5LlGJOXzghwre1wgOBKbfsiSeivMlSgkeUkDMeywHU32wmukaoYRpzsT8eax3Sue7E3GCzfE7sO8sx5QfVrGNtuGWINM2w",
       "Content-Type":"application/json",
       "Accept": "application/json",
       "x-lbg-brand":"LYDS",

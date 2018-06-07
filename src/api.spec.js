@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const superTest = require('supertest');
 const jsonLib = require('./utils/json-utility');
 const swaggerLib = require('./utils/swagger-utility');
+const logger = require('./utils/logger-utility');
 const testDataManager = require('./test-data-manager');
 describe('Validate the API response and swagger check', function(){
     testDataManager.data['DATA_VALIDATION'].forEach(testData => {
@@ -18,6 +19,9 @@ describe('Validate the API response and swagger check', function(){
                     .end(function(err, res){
                         const actualResBody = testData.expectedResponse.responseBodyAttributeName ?
                         res.body[testData.expectedResponse.responseBodyAttributeName] : res.body;
+                        if (err) {
+                            logger.log(testData.requestData, res);
+                        }
                         const isSubset = jsonLib.isJSONObjectSubset(actualResBody, testData.expectedResponse.responseBody.body);
                             if (isSubset){
                                 expect(isSubset).to.be.true;
@@ -43,6 +47,9 @@ describe('Validate the API response and swagger check', function(){
                         const swaggerObject = jsonLib.yamlToJson(testData.expectedSwagger);
                         const actualResBody = testData.expectedResponse.responseBodyAttributeName ?
                         res.body[testData.expectedResponse.responseBodyAttributeName] : res.body;
+                        if (err) {
+                            logger.log(testData.requestData, res);
+                        }
                         swaggerLib.validateJSONResponseWithSwaggerTools(swaggerObject, `#/definitions/${testData.requestData.swaggerDefinitionName}`, actualResBody).then((isFlag) => {
                             if(isFlag){
                                 expect(isFlag).to.be.true;
@@ -67,6 +74,9 @@ describe('Validate the API response and swagger check', function(){
                     .end(function(err, res){
                         const actualResHeaders = testData.expectedResponse.responseHeaderAttributeName ?
                         res.body[testData.expectedResponse.responseHeaderAttributeName] : res.headers;
+                        if (err) {
+                            logger.log(testData.requestData, res);
+                        }
                         const expectedResHeaders = testData.expectedResponse.responseBody.headers;
                         for(let key in expectedResHeaders){
                             if (!expectedResHeaders[key].hasOwnProperty('RegEx')){
