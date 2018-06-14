@@ -44,20 +44,22 @@ describe('Validate the API response and swagger check', function(){
             }
             intermediateRequest.expect(testData.expectedResponse.httpResponseStatusCode)
                     .end(function(err, res){
-                        const swaggerObject = jsonLib.yamlToJson(testData.expectedSwagger);
-                        const actualResBody = testData.expectedResponse.responseBodyAttributeName ?
-                        res.body[testData.expectedResponse.responseBodyAttributeName] : res.body;
                         if (err) {
                             logger.log(testData.requestData, res);
+                            done(new Error('response validation failed against swagger'));
+                        } else {
+                            const swaggerObject = jsonLib.yamlToJson(testData.expectedSwagger);
+                            const actualResBody = testData.expectedResponse.responseBodyAttributeName ?
+                                res.body[testData.expectedResponse.responseBodyAttributeName] : res.body;
+                            swaggerLib.validateJSONResponseWithSwaggerTools(swaggerObject, `#/definitions/${testData.requestData.swaggerDefinitionName}`, actualResBody).then((isFlag) => {
+                                if(isFlag){
+                                    expect(isFlag).to.be.true;
+                                    done();
+                                } else {
+                                    done(new Error('response validation failed against swagger'));
+                                }
+                            });
                         }
-                        swaggerLib.validateJSONResponseWithSwaggerTools(swaggerObject, `#/definitions/${testData.requestData.swaggerDefinitionName}`, actualResBody).then((isFlag) => {
-                            if(isFlag){
-                                expect(isFlag).to.be.true;
-                                done();
-                            } else {
-                                done(new Error('response validation failed against swagger'));
-                            }
-                        });
                     });
         });
     });
