@@ -52,7 +52,6 @@ def publishNexusHandler(String targetBranch, String targetEnv, context){
 						echo "registry=${nexusURL}" > ${env.WORKSPACE}/.npmrc && \\
 						echo "email=npmpublish" >> ${env.WORKSPACE}/.npmrc && \\
 						echo "_auth=${npm_auth}" >> ${env.WORKSPACE}/.npmrc && \\
-						version-checker.js && \\
 						npm3 publish --registry ${nexusURL}"""
 			}
 		} catch (error) {
