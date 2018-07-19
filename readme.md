@@ -1,7 +1,7 @@
 # Getting Started
 It will replace all the tokens in the definition folder by the urls present in job.configuration.json file !!
 1. Install the following npm module
-    ``` npm install apie-definition-setup --save ```
+    ``` npm install core-gateway-lib --save ```
 2. Require the project in your replace.tokens.js file
    ``` const { replaceTokens } = require('apie-definition-setup');
  ```
