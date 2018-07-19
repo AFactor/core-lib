@@ -22,4 +22,4 @@ BuildHandlers handlers = new ConfigurableBuildHandlers(	builder,
 							staticAnalyses,
 							integrationTests) as BuildHandlers
 
-invokeBuildPipelineHawk( 'ob-tpp-apie-test-automation-lib', handlers, configuration, notify , timeout )
+invokeBuildPipelineHawk( 'apie-core-gateway-lib', handlers, configuration, notify , timeout )
