@@ -53,7 +53,10 @@ function convertToYAML(json) {
   return yaml.dump(json);
 }
 
-fsExtra.removeSync(definitions.outputDir); // delete definitions folder before creating yamls
+
+//fsExtra.removeSync(definitions.outputDir); // delete definitions folder before creating yamls
+
+
 module.exports = {
   'loadDynamicConf' : loadDynamicConf,
   'createApiFile' : createApiFile,
