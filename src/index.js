@@ -13,7 +13,7 @@ const writeFile = require('write');
 //Importing all the functions from helper folder 
 const { replaceTokens , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
 const { loadDynamicConf, createApiFile, replaceLiteralTokens, transformer, createProductFiles, convertToYAML } = require('../helper/setupApis.js');
-const { publishProducts } = require('../helper/publishProducts.js');
+const { publishProducts , publishProductCatalog } = require('../helper/publishProducts.js');
 
 const utilOpts = { depth: 15, colors: true, compact: false };
 const configFolderPath = path.resolve("./", 'urbanCode');

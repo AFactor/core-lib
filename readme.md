@@ -12,6 +12,8 @@ It will replace all the tokens in the definition folder by the urls present in j
 
 5. Add the token values from job-configuration.json to the yamls created in definition folder by runnning 'npm run replace-tokens' . This command will also update the catalog and space name in catalogs.json.
 
-6. Run 'npm run publish-products' to instead of gulp publish command.
+6. Run 'npm run publish-products' to publish the products.
+
+7. In urbanCode/catalogs.json , the channel and space name has been tokenized and the values are being fetched from job-configuration.json . So make sure you update the job-configuration.json file.
 
 ### Test Scenerios
