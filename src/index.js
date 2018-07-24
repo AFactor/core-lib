@@ -14,7 +14,7 @@ const writeFile = require('write');
 const { replaceTokens , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
 const { setupApis, loadDynamicConf, createApiFile } = require('../helper/setupApis.js');
 const { setupProducts, replaceLiteralTokens, transformer, createProductFiles, convertToYAML } = require('../helper/setupProducts.js');
-const { publishProducts , publishProductCatalog } = require('../helper/publishProducts.js');
+const { publishProduct , publishProductWithSpace , publishProductWithoutSpace } = require('../helper/publishProducts.js');
 
 
 
@@ -28,7 +28,7 @@ const { publishProducts , publishProductCatalog } = require('../helper/publishPr
 
 module.exports = {
     'replaceTokens': replaceTokens,
-    'publishProducts': publishProducts,
+    'publishProduct': publishProduct,
     'setupApis': setupApis,
     'setupProducts': setupProducts
 };

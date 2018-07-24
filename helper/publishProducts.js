@@ -14,14 +14,14 @@ const configFolderPath = path.resolve("./", 'urbanCode');
 const catalogs = require(`${configFolderPath}/catalogs.json`);
 
 
-function publishProducts() {
+function publishProduct() {
     for (let catalog in catalogs) {
         if (!Array.isArray(catalogs[catalog])) {
             
             for (let space in catalogs[catalog]) {
                 if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}/spaces/${space}`).code === 0) {
-                    const products = catalogs[catalog][space];
-                    publishProductCatalog(products, '--scope space');
+                    const catalogSpace = catalogs[catalog][space];
+                    publishProductWithSpace(catalogSpace, apicServer , apicOrg );
 
                 } else {
                     logger(`Error: setting space to ${space} in catalog ${catalog} and organisation - ${apicOrg}`);
@@ -30,8 +30,8 @@ function publishProducts() {
             }
         } else {
             if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}`).code === 0) {
-                const products = catalogs[catalog];
-                publishProductCatalog(products);
+                const catalog = catalogs[catalog];
+                publishProductWithoutSpace(catalog, apicServer , apicOrg);
                 
             } else {
                 logger(`Error: setting catalog to ${catalog} in organisation - ${apicOrg}`);
@@ -41,17 +41,15 @@ function publishProducts() {
     }
 };
 
-function publishProductCatalog(products, scope) {
-    scope = scope || '';
+function publishProductWithSpace(products, apicServer , apicOrg ) {
     for (let obj of products) {
         let product = obj.productName,
             isDeploy = obj.deploy || false;
         if (isDeploy === true) {
             logger(`publishing product ${product} started`);
-            if (shell.exec(`apic publish -s ${apicServer} ${product} ${scope}`).code !== 0) {
+            if (shell.exec(`apic publish -s ${apicServer} ${product} --scope space`).code !== 0) {
                 logger(`Error: publishing product ${product}`);
                 shell.exec(`cat ${product}`);
-                // shell.exec('definitions/account-information-internal-bos.yaml');
                 return shell.exit(1);
             }
             logger(`publishing product ${product} finished`);
@@ -59,7 +57,25 @@ function publishProductCatalog(products, scope) {
         } 
     }
 }
+function publishProductWithoutSpace(products, apicServer , apicOrg) {
+    for (let obj of products) {
+        let product = obj.productName,
+            isDeploy = obj.deploy || false;
+        if (isDeploy === true) {
+            logger(`publishing product ${product} started`);
+            if (shell.exec(`apic publish -s ${apicServer} ${product}`).code !== 0) {
+                logger(`Error: publishing product ${product}`);
+                shell.exec(`cat ${product}`);
+                return shell.exit(1);
+            }
+            logger(`publishing product ${product} finished`);
+            shell.exec(`sleep ${tts}`);
+            console.log("inside true" , scope);
+        } 
+    }
+}
 module.exports = {
-    'publishProducts': publishProducts,
-    'publishProductCatalog': publishProductCatalog
+    'publishProduct': publishProduct,
+    'publishProductWithSpace': publishProductWithSpace,
+    'publishProductWithoutSpace': publishProductWithoutSpace
 }
