@@ -3,54 +3,60 @@ const fs = require('fs');
 const fsExtra = require('fs-extra');
 const path = require('path');
 const writeFile = require('write');
+const util = require('util');
 const yaml = require('js-yaml');
 let argv = require('yargs').argv;
 const handlebars = require('handlebars');
 const merge = require('lodash').merge;
 
-const configFolderPath = path.resolve("./",'urbanCode');
+const { transformer , convertToYAML , replaceLiteralTokens } = require('../helper/commonSetup.js');
+
+const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
 const definitions = require(`${configFolderPath}/definitions.json`);
 const apiValues = require(`${configFolderPath}/apis.json`);
+const utilOpts = { depth: 15, colors: true, compact: false };
+const productSettings = require(`${configFolderPath}/products.json`);
+
+
+
+function setupApis() {
+    for (let definition in definitions.apis) {
+        const apiDefinition = definitions.apis[definition];
+        let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
+        if (apiDefinition.templateConf) {
+            try {
+                apiConfig = loadDynamicConf(apiDefinition, apiConfig);
+            } catch (e) {
+                console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
+                throw new Error('Failed in setup API');
+            }
+        }
+        const securityDefinition = apiDefinition.security;
+        if (securityDefinition) {
+            const transformedOutput = JSON.parse(transformer(securityDefinition.template, securityDefinition.config));
+            apiConfig.securityDefinitions = transformedOutput.securityDefinitions;
+            apiConfig.security = transformedOutput.security;
+        }
+        createApiFile(apiDefinition.dest, apiConfig);
+    }
+}
 
 function loadDynamicConf(apiDefinition, apiConfig) {
-  const inputData = apiDefinition.src;
-  const templateConfObj = apiValues[apiDefinition.templateConf].config;
-  const configObj = Object.assign({}, apiDefinition, templateConfObj);
-  const merged = transformer(inputData, configObj);
-  const transformedOutput = yaml.safeLoad(merged);
-  const dynamicConf = merge({}, apiConfig, transformedOutput);
-  return dynamicConf;
+    const inputData = apiDefinition.src;
+    const templateConfObj = apiValues[apiDefinition.templateConf].config;
+    const configObj = Object.assign({}, apiDefinition, templateConfObj);
+    const merged = transformer(inputData, configObj);
+    const transformedOutput = yaml.safeLoad(merged);
+    const dynamicConf = merge({}, apiConfig, transformedOutput);
+    return dynamicConf;
 }
 
 function createApiFile(name, config) {
-  const filePath = path.resolve(definitions.outputDir, name);
-  const yamlObj = convertToYAML(config);
-  const finalYamlObj = replaceLiteralTokens(yamlObj);
-  writeFile.sync(filePath, finalYamlObj);
-}
-
-function replaceLiteralTokens(str) {
-    return str
-        .replace(/\$\&\&/gi, '&&')
-        .replace(/\$\&\&/gi, '&&');
-}
-
-function transformer(input, configObj) {
-  const template = typeof input === 'object' ? JSON.stringify(input) : fsExtra.readFileSync(path.resolve(definitions.templateDir, input)).toString();
-  const _template = handlebars.compile(template);
-  const output = _template(configObj);
-  return output;
-}
-
-
-function createProductFiles(productObj, outputYaml) {
-  let filePath = path.resolve(definitions.outputDir, productObj.filename);
-  writeFile.sync(filePath, outputYaml);
-}
-
-function convertToYAML(json) {
-  return yaml.dump(json);
+    const filePath = path.resolve(definitions.outputDir, name);
+    const yamlObj = convertToYAML(config);
+    const finalYamlObj = replaceLiteralTokens(yamlObj);
+    writeFile.sync(filePath, finalYamlObj);
 }
 
 
@@ -58,10 +64,7 @@ function convertToYAML(json) {
 
 
 module.exports = {
-  'loadDynamicConf' : loadDynamicConf,
-  'createApiFile' : createApiFile,
-  'replaceLiteralTokens' : replaceLiteralTokens,
-  'transformer' : transformer,
-  'createProductFiles' :createProductFiles,
-  'convertToYAML' :convertToYAML
+    'setupApis': setupApis,
+    'loadDynamicConf': loadDynamicConf,
+    'createApiFile': createApiFile
 }

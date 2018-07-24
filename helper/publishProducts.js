@@ -2,8 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const env = process.env.NODE_ENV || 'development';
-const apicOrg = process.env.APIC_ORG || 'prototype';
+const apicOrg = process.env.APIC_ORG || 'apigateway-dev';
 const apicServer = process.env.APIC_SERVER || 'management01.psd2.sandbox.extranet.group';
+const tts = process.env.tts || '0';
 const shell = require('shelljs');
 const exec = require('child_process').exec;
 const logger = require('fancy-log');
@@ -31,7 +32,6 @@ function publishProducts() {
             if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}`).code === 0) {
                 const products = catalogs[catalog];
                 publishProductCatalog(products);
-                console.log("catalogs[catalog]", catalogs[catalog][space]);
                 
             } else {
                 logger(`Error: setting catalog to ${catalog} in organisation - ${apicOrg}`);
@@ -56,7 +56,7 @@ function publishProductCatalog(products, scope) {
             }
             logger(`publishing product ${product} finished`);
             shell.exec(`sleep ${tts}`);
-        }
+        } 
     }
 }
 module.exports = {
