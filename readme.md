@@ -3,7 +3,7 @@ It will replace all the tokens in the definition folder by the urls present in j
 1. Install the following npm module
     ``` npm install core-gateway-lib --save ```
 2. Require the project in your replace.tokens.js file
-   ``` const { replaceTokens, publishProducts, setupApis, setupProducts } = require('apie-definition-setup');
+   ``` const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib');
 ;
  ```
 3. Add the definitions folder by calling 'setupApis()' AND 'setupProducts()' function. and running 'npm run setup' command.

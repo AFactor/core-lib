@@ -3,7 +3,7 @@
 const { replaceTokens , replaceTokenValue , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
 const { setupApis, loadDynamicConf, createApiFile } = require('../helper/setupApis.js');
 const { setupProducts, replaceLiteralTokens, transformer, createProductFiles, convertToYAML } = require('../helper/setupProducts.js');
-const { publishProduct , publishProductWithSpace , publishProductWithoutSpace } = require('../helper/publishProducts.js');
+const { publishProducts , publishProductWithSpace , publishProductWithoutSpace } = require('../helper/publishProducts.js');
 
 
 // Setup --- for creating definitions folder containing the yaml 
@@ -16,7 +16,7 @@ const { publishProduct , publishProductWithSpace , publishProductWithoutSpace } 
 
 module.exports = {
     'replaceTokens': replaceTokens,
-    'publishProduct': publishProduct,
+    'publishProducts': publishProducts,
     'setupApis': setupApis,
     'setupProducts': setupProducts
 };
