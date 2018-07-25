@@ -25,55 +25,35 @@ try {
 
 // Replace tokens ---- replaces the variables value in the defintion folder yamls to the values from tokens present in job-configuration.json
 function replaceTokens() {
+    // Replace token in definition folder
     fs.readdir(definitionsFolder, (err, files) => {
         if (!err) {
             // Iterating through all the files inside definitionsFolder folder
             files.forEach(file => {
                 file = `./definitions/${file}`; // appending correct path
-                fs.readFile(file, { encoding: 'utf-8' }, function(err, data) {
-                    if (!err) {
-                        if (argv.debug) {
-                            console.log('findTokenDelimiters(data)', findTokenDelimiters(data));
-                        }
-                        // Run processing
-                        if (findTokenDelimiters(data)) {
-                            data = replaceConfigTokens(data, tokenValues, file);
-                            // console.log("data", data);
-                            let errors = findUnreplacedTokens(data.split(/\r?\n/));
-                            if (errors.length) {
-                                handleErrors(errors, file); // Will report errors then throw an exception and stop the process.
-                            } else {
-                                if (argv.debug) {
-                                    console.log(chalk.green('No rogue tokens found'));
-                                }
-                            }
-                        }
-                        // Replace file contents with treated string and return file
-                        fs.writeFile(file, data, 'utf8', function(err) {
-                            if (err) return console.log(err);
-                        });
-                    } else {
-                        console.log(err);
-                    }
-                });
+                replaceTokenValue(file);
             });
         } else {
             console.log('definitions folder has not been made!! Run npm run setup to update the definitions folder');
         }
     });
-    // console.log("catalogs", catalogs);
-    fs.readFile(catalog, { encoding: 'utf-8' }, function(err, data) {
+    // Replace token in catalog.json
+    replaceTokenValue(catalog);
+};
+
+function replaceTokenValue(file) {
+    fs.readFile(file, { encoding: 'utf-8' }, function(err, data) {
         if (!err) {
             if (argv.debug) {
                 console.log('findTokenDelimiters(data)', findTokenDelimiters(data));
             }
             // Run processing
             if (findTokenDelimiters(data)) {
-                data = replaceConfigTokens(data, tokenValues, catalog);
+                data = replaceConfigTokens(data, tokenValues, file);
                 // console.log("data", data);
                 let errors = findUnreplacedTokens(data.split(/\r?\n/));
                 if (errors.length) {
-                    handleErrors(errors, catalog); // Will report errors then throw an exception and stop the process.
+                    handleErrors(errors, file); // Will report errors then throw an exception and stop the process.
                 } else {
                     if (argv.debug) {
                         console.log(chalk.green('No rogue tokens found'));
@@ -81,15 +61,14 @@ function replaceTokens() {
                 }
             }
             // Replace file contents with treated string and return file
-            fs.writeFile(catalog, data, 'utf8', function(err) {
+            fs.writeFile(file, data, 'utf8', function(err) {
                 if (err) return console.log(err);
             });
         } else {
             console.log(err);
         }
-
     });
-};
+}
 // UTILITY FUNCTIONS
 // Logs out errors; throws an exception at the end to avoid bad files being written to disc.
 
@@ -183,9 +162,10 @@ function findTokenDelimiters(str) {
 
 
 module.exports = {
-  'replaceTokens' : replaceTokens,    
-  'handleErrors' : handleErrors,
-  'findUnreplacedTokens' : findUnreplacedTokens,
-  'replaceConfigTokens' : replaceConfigTokens,
-  'findTokenDelimiters' : findTokenDelimiters
+    'replaceTokens': replaceTokens,
+    'replaceTokenValue' : replaceTokenValue,
+    'handleErrors': handleErrors,
+    'findUnreplacedTokens': findUnreplacedTokens,
+    'replaceConfigTokens': replaceConfigTokens,
+    'findTokenDelimiters': findTokenDelimiters
 }

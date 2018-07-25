@@ -11,7 +11,7 @@ const encoding = 'utf-8';
 const writeFile = require('write');
 
 //Importing all the functions from helper folder 
-const { replaceTokens , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
+const { replaceTokens , replaceTokenValue , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
 const { setupApis, loadDynamicConf, createApiFile } = require('../helper/setupApis.js');
 const { setupProducts, replaceLiteralTokens, transformer, createProductFiles, convertToYAML } = require('../helper/setupProducts.js');
 const { publishProduct , publishProductWithSpace , publishProductWithoutSpace } = require('../helper/publishProducts.js');
