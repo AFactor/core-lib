@@ -64,7 +64,5 @@ function createApiFile(name, config) {
 
 
 module.exports = {
-    'setupApis': setupApis,
-    'loadDynamicConf': loadDynamicConf,
-    'createApiFile': createApiFile
+    'setupApis': setupApis
 }

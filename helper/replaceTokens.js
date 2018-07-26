@@ -162,10 +162,5 @@ function findTokenDelimiters(str) {
 
 
 module.exports = {
-    'replaceTokens': replaceTokens,
-    'replaceTokenValue' : replaceTokenValue,
-    'handleErrors': handleErrors,
-    'findUnreplacedTokens': findUnreplacedTokens,
-    'replaceConfigTokens': replaceConfigTokens,
-    'findTokenDelimiters': findTokenDelimiters
+    'replaceTokens': replaceTokens
 }

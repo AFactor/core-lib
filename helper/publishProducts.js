@@ -72,7 +72,5 @@ function publishProductWithoutSpace(catalog, apicServer, apicOrg) {
     }
 }
 module.exports = {
-    'publishProducts': publishProducts,
-    'publishProductWithSpace': publishProductWithSpace,
-    'publishProductWithoutSpace': publishProductWithoutSpace
+    'publishProducts': publishProducts
 }

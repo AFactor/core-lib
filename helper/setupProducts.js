@@ -46,6 +46,5 @@ function createProductFiles(productObj, outputYaml) {
 
 
 module.exports = {
-  'setupProducts' : setupProducts,
-  'createProductFiles' :createProductFiles
+  'setupProducts' : setupProducts
 }

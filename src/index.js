@@ -1,9 +1,9 @@
 
 //Importing all the functions from helper folder 
-const { replaceTokens , replaceTokenValue , handleErrors, findUnreplacedTokens, replaceConfigTokens, findTokenDelimiters } = require('../helper/replaceTokens.js');
-const { setupApis, loadDynamicConf, createApiFile } = require('../helper/setupApis.js');
-const { setupProducts, replaceLiteralTokens, transformer, createProductFiles, convertToYAML } = require('../helper/setupProducts.js');
-const { publishProducts , publishProductWithSpace , publishProductWithoutSpace } = require('../helper/publishProducts.js');
+const { replaceTokens } = require('../helper/replaceTokens.js');
+const { setupApis } = require('../helper/setupApis.js');
+const { setupProducts } = require('../helper/setupProducts.js');
+const { publishProducts } = require('../helper/publishProducts.js');
 
 
 // Setup --- for creating definitions folder containing the yaml 
