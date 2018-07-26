@@ -3,7 +3,17 @@ It will replace all the tokens in the definition folder by the urls present in j
 1. Install the following npm module
     ``` npm install core-gateway-lib --save ```
 2. Require the project in your replace.tokens.js file
-   ``` const { replaceTokens } = require('apie-definition-setup');
+   ``` const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib');
+;
  ```
-3. Add the tokens to the definitions folder by calling 'replaceTokens()' function. Please see below the options.
+3. Add the definitions folder by calling 'setupApis()' AND 'setupProducts()' function. and running 'npm run setup' command.
+
+4. change the catalog.json channel and space name to the variables .
+
+5. Add the token values from job-configuration.json to the yamls created in definition folder by runnning 'npm run replace-tokens' . This command will also update the catalog and space name in catalogs.json.
+
+6. Run 'npm run publish-products' to publish the products.
+
+7. In urbanCode/catalogs.json , the channel and space name has been tokenized and the values are being fetched from job-configuration.json . So make sure you update the job-configuration.json file.
+
 ### Test Scenerios
