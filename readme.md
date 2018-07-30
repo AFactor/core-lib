@@ -1,19 +1,53 @@
 # Getting Started
+It will create all the yamls inside the definition folder .
 It will replace all the tokens in the definition folder by the urls present in job.configuration.json file !!
+It will replace the catalog name and space name inside the catlogs.json from the job-configuration.json file !!
+It will also publish the products.
+
 1. Install the following npm module
     ``` npm install core-gateway-lib --save ```
-2. Require the project in your replace.tokens.js file
-   ``` const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib');
-;
- ```
-3. Add the definitions folder by calling 'setupApis()' AND 'setupProducts()' function. and running 'npm run setup' command.
+2. Require all the below functions in your setup.js file.
+   ``` const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib'); ```
 
-4. change the catalog.json channel and space name to the variables .
+3. Run the command 'npm run setup' which will create all the yamls of apis and products inside the definition folder.
 
-5. Add the token values from job-configuration.json to the yamls created in definition folder by runnning 'npm run replace-tokens' . This command will also update the catalog and space name in catalogs.json.
+4. Run the command 'npm run replace-tokens' . It will replace all the tokens inside the definition folder with the tokens present in job-configuration.file. It will also replace the tokenized value of catalog and space in catlogs.json from the job-configuration.file.
 
-6. Run 'npm run publish-products' to publish the products.
+5. Product version has also been tokenized. So update the job-configuration.json with those parameters accordingly.
 
-7. In urbanCode/catalogs.json , the channel and space name has been tokenized and the values are being fetched from job-configuration.json . So make sure you update the job-configuration.json file.
+6. Run the command 'npm run publish-products'. It will publish only those products which are to be published as we have given the feature of publish individual products rather than the whole products in the artifact. This can be done by applying flag deploy:true to those products which are to be published.
 
-### Test Scenerios
+
+### Changes to be made
+
+1. Inside your setup.js replace all the code with only the below piece of code.
+	const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib');
+	const args = require('minimist')(process.argv.slice(2));
+
+	if (args.j === 'generate-definitions') {
+	  setupApis();
+	  setupProducts();
+	} else if (args.j === 'replace-tokens') {
+	  replaceTokens();
+
+	} else if (args.j === 'publish-products') {
+	  publishProducts();
+
+	} else {
+	  throw new Error('Argument undefined');
+	}
+
+2. update your package.json with some arguments . Take the reference from discovery-api repo.
+
+3. Remove publish-products and replace-tokens gulp dependency from the gulpfile,js. Also remove all the extra dependency which they were using . Take the reference from discovery-api repo.
+
+4. Inside job-configuration.json , add new version tokens . Eg : "DISCOVERY_PRODUCT_LYDS_VERSION" . Take the reference from discovery-api repo.
+
+5. Pass these variables of product version to definition.json. Eg:  version:"&&DISCOVERY_PRODUCT_LYDS_VERSION&&"
+
+6. In product.hbs , change {{version}} from this to {{{version}}} . Double curly braces to triple curly braces.
+
+7. In your catalogs.json , replace the catalog and space name to the "&&catalogName&&" and "&&spaceName&&" variable as these are tokenized.
+
+8. Inside application.groovy , add replaceTokens('j2/deployable/urbanCode/', context.config.apiconnect) below the replaceTokens('j2/deployable/urbanCode/', context.config.environments.master.tokens) so that it can pick the catalog and space name from resource property from job-configuration.json
+
