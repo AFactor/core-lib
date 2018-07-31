@@ -9,7 +9,7 @@ let argv = require('yargs').argv;
 const handlebars = require('handlebars');
 const merge = require('lodash').merge;
 
-const { transformer , convertToYAML , replaceLiteralTokens } = require('../helper/commonSetup.js');
+const { transformer, convertToYAML, replaceLiteralTokens } = require('../helper/commonSetup.js');
 
 const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
@@ -17,46 +17,58 @@ const definitions = require(`${configFolderPath}/definitions.json`);
 const apiValues = require(`${configFolderPath}/apis.json`);
 const utilOpts = { depth: 15, colors: true, compact: false };
 const productSettings = require(`${configFolderPath}/products.json`);
-
-
+const catalogs = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] ? require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
 
 function setupApis() {
-    for (let definition in definitions.apis) {
-        const apiDefinition = definitions.apis[definition];
-        let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
-        if (apiDefinition.templateConf) {
-            try {
-                apiConfig = loadDynamicConf(apiDefinition, apiConfig);
-            } catch (e) {
-                console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
-                throw new Error('Failed in setup API');
-            }
-        }
-        const securityDefinition = apiDefinition.security;
-        if (securityDefinition) {
-            const transformedOutput = JSON.parse(transformer(securityDefinition.template, securityDefinition.config));
-            apiConfig.securityDefinitions = transformedOutput.securityDefinitions;
-            apiConfig.security = transformedOutput.security;
-        }
-        createApiFile(apiDefinition.dest, apiConfig);
+  const products = catalogs.filter(path => path.deploy === true)
+    .map(name => name.productName);
+  products.forEach(function(name) {
+    const product = name.split('/')[1];
+    const productDefinition = definitions.products.filter(publishProduct => publishProduct.filename === product).map(name => name.configObj.name).toString();
+    setupFilterApis(productDefinition);
+
+  });
+}
+
+function setupFilterApis(product) {
+  const productDeploy = product,
+     apisDefinitions = definitions.apis.filter(api => api.xIBMName === productDeploy);
+  for (let definition in apisDefinitions) {
+    const apiDefinition = apisDefinitions[definition];
+    let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
+    if (apiDefinition.templateConf) {
+      try {
+        apiConfig = loadDynamicConf(apiDefinition, apiConfig);
+      } catch (e) {
+        console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
+        throw new Error('Failed in setup API');
+      }
     }
+    const securityDefinition = apiDefinition.security;
+    if (securityDefinition) {
+      const transformedOutput = JSON.parse(transformer(securityDefinition.template, securityDefinition.config));
+      apiConfig.securityDefinitions = transformedOutput.securityDefinitions;
+      apiConfig.security = transformedOutput.security;
+    }
+    createApiFile(apiDefinition.dest, apiConfig);
+  }
 }
 
 function loadDynamicConf(apiDefinition, apiConfig) {
-    const inputData = apiDefinition.src;
-    const templateConfObj = apiValues[apiDefinition.templateConf].config;
-    const configObj = Object.assign({}, apiDefinition, templateConfObj);
-    const merged = transformer(inputData, configObj);
-    const transformedOutput = yaml.safeLoad(merged);
-    const dynamicConf = merge({}, apiConfig, transformedOutput);
-    return dynamicConf;
+  const inputData = apiDefinition.src;
+  const templateConfObj = apiValues[apiDefinition.templateConf].config;
+  const configObj = Object.assign({}, apiDefinition, templateConfObj);
+  const merged = transformer(inputData, configObj);
+  const transformedOutput = yaml.safeLoad(merged);
+  const dynamicConf = merge({}, apiConfig, transformedOutput);
+  return dynamicConf;
 }
 
 function createApiFile(name, config) {
-    const filePath = path.resolve(definitions.outputDir, name);
-    const yamlObj = convertToYAML(config);
-    const finalYamlObj = replaceLiteralTokens(yamlObj);
-    writeFile.sync(filePath, finalYamlObj);
+  const filePath = path.resolve(definitions.outputDir, name);
+  const yamlObj = convertToYAML(config);
+  const finalYamlObj = replaceLiteralTokens(yamlObj);
+  writeFile.sync(filePath, finalYamlObj);
 }
 
 
@@ -64,5 +76,5 @@ function createApiFile(name, config) {
 
 
 module.exports = {
-    'setupApis': setupApis
+  'setupApis': setupApis
 }
