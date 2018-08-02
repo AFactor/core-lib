@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint 'src/**/*.js' -f table --fix",
     "pretest": "npm run lint",
-    "move": "cp src/* ../src"
+    "move": "cp src/* ../../src/"
   },
   "dependencies": {
     "apiconnect": "^2.7.111",
