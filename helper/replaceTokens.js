@@ -1,24 +1,19 @@
 /* eslint-disable strict, max-len */
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
 let argv = require('yargs').argv;
-const env = process.env.NODE_ENV || 'development';
 const chalk = require('chalk');
-const exec = require('child_process').exec;
 
 const divider = '\n------------------------------------------------------------------------------------------------';
 const delimiter = '&&';
 const delimeterRegex = new RegExp(`${delimiter}.*?${delimiter}`, 'g');
 const tokenRegex = new RegExp(`${delimiter}(.*?)${delimiter}`, 'g');
 const definitionsFolder = './definitions';
-const configFolderPath = path.resolve("./", 'urbanCode');
-const definitions = require(`${configFolderPath}/definitions.json`);
-const catalog = path.resolve("./", 'urbanCode/catalogs.json');
+const catalog = path.resolve('./', 'urbanCode/catalogs.json');
 let tokenValues = {};
 
 try {
-    tokenValues = require(path.resolve("./", 'pipelines/conf/job-configuration.json')).environments.master.tokens;
+    tokenValues = require(path.resolve('./', 'pipelines/conf/job-configuration.json')).environments.master.tokens;
 } catch (e) {
     console.warn('Couldn\'t require tokens. If this is not a local environment then it\'s fine.', e.message);
 }
@@ -54,24 +49,24 @@ function replaceTokenValue(file) {
                 let errors = findUnreplacedTokens(data.split(/\r?\n/));
                 if (errors.length) {
                     handleErrors(errors, file); // Will report errors then throw an exception and stop the process.
-                } else {
-                    if (argv.debug) {
-                        console.log(chalk.green('No rogue tokens found'));
-                    }
+                } else if (argv.debug) {
+                    console.log(chalk.green('No rogue tokens found'));
                 }
             }
             // Replace file contents with treated string and return file
             fs.writeFile(file, data, 'utf8', function(err) {
-                if (err) return console.log(err);
+                if (err) {
+                    return console.log(err);
+                }
             });
         } else {
             console.log(err);
         }
     });
 }
+
 // UTILITY FUNCTIONS
 // Logs out errors; throws an exception at the end to avoid bad files being written to disc.
-
 function handleErrors(errors, file) {
     console.log(chalk.red(`The following tokens were not replaced in ${file}`));
     errors.forEach(err => {
@@ -82,14 +77,12 @@ function handleErrors(errors, file) {
                 if (i === arr.length - 2) {
                     tokenListString += ' and ';
                 } else {
-
                     tokenListString += ', ';
                 }
             }
         });
         console.log(chalk.red(`${tokenListString} ${errors.length > 1 ? 'were' : 'was'} found on line ${err.lineNo}`));
     });
-    //throw new Error('Unreplaced tokens found');
     console.log(chalk.magenta(divider));
 };
 
@@ -128,7 +121,6 @@ function replaceConfigTokens(str, tokenValues, fileName) {
         const tokenValue = tokenValues[tokenName];
         if (tokenValue) {
             if (argv.debug) {
-
                 console.log(`Replacing '${match}' with '${tokenValue}'`);
             }
             return tokenValue;
@@ -163,4 +155,4 @@ function findTokenDelimiters(str) {
 
 module.exports = {
     'replaceTokens': replaceTokens
-}
+};
