@@ -8,7 +8,7 @@ let argv = require('yargs').argv;
 const handlebars = require('handlebars');
 const merge = require('lodash').merge;
 
-const { transformer, convertToYAML, replaceLiteralTokens } = require('../helper/commonSetup.js');
+const { transformer, convertToYAML, replaceLiteralTokens, createDeployableProducts } = require('../helper/commonSetup.js');
 
 const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
@@ -16,19 +16,16 @@ const definitions = require(`${configFolderPath}/definitions.json`);
 const apiValues = require(`${configFolderPath}/apis.json`);
 const utilOpts = { depth: 15, colors: true, compact: false };
 const productSettings = require(`${configFolderPath}/products.json`);
-const catalogs = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] ? require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
+
 
 function setupProducts() {
-  const products = catalogs.filter(path => path.deploy === true)
-    .map(name => name.productName);
-  products.forEach(function(name) {
-    const product = name.split('/')[1];
-    setupPublishProducts(product);
+  let products = createDeployableProducts();
+  products.forEach(function(product) {
+    createProducts(product);
   });
-
 }
 
-function setupPublishProducts(product) {
+function createProducts(product) {
   const productDeploy = product,
     productDefinitions = definitions.products.filter(publishProduct => publishProduct.filename === productDeploy);
   for (let definition in productDefinitions) {

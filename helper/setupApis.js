@@ -9,7 +9,7 @@ let argv = require('yargs').argv;
 const handlebars = require('handlebars');
 const merge = require('lodash').merge;
 
-const { transformer, convertToYAML, replaceLiteralTokens } = require('../helper/commonSetup.js');
+const { transformer, convertToYAML, replaceLiteralTokens, createDeployableProducts } = require('../helper/commonSetup.js');
 
 const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
@@ -17,22 +17,20 @@ const definitions = require(`${configFolderPath}/definitions.json`);
 const apiValues = require(`${configFolderPath}/apis.json`);
 const utilOpts = { depth: 15, colors: true, compact: false };
 const productSettings = require(`${configFolderPath}/products.json`);
-const catalogs = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] ? require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
+
 
 function setupApis() {
-  const products = catalogs.filter(path => path.deploy === true)
-    .map(name => name.productName);
-  products.forEach(function(name) {
-    const product = name.split('/')[1];
-    const productDefinition = definitions.products.filter(publishProduct => publishProduct.filename === product).map(name => name.configObj.name).toString();
-    setupFilterApis(productDefinition);
-
+  fsExtra.removeSync(definitions.outputDir); // delete definitions folder before creating yamls
+  let products = createDeployableProducts();
+  products.forEach(function(product) {
+    const apis = definitions.products.filter(publishProduct => publishProduct.filename === product).map(name => name.configObj.name).toString();
+    createApis(apis);
   });
 }
 
-function setupFilterApis(product) {
-  const productDeploy = product,
-     apisDefinitions = definitions.apis.filter(api => api.xIBMName === productDeploy);
+function createApis(apis) {
+  const productDeploy = apis,
+    apisDefinitions = definitions.apis.filter(api => api.xIBMName === productDeploy);
   for (let definition in apisDefinitions) {
     const apiDefinition = apisDefinitions[definition];
     let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));

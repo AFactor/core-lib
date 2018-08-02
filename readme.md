@@ -22,15 +22,16 @@ It will also publish the products.
 
 1. Inside your setup.js replace all the code with only the below piece of code.
 	const { replaceTokens, publishProducts, setupApis, setupProducts } = require('core-gateway-lib');
-	const args = require('minimist')(process.argv.slice(2));
+	const run = process.argv[2];
 
-	if (args.j === 'generate-definitions') {
+	if (run === 'generate-definitions') {
 	  setupApis();
 	  setupProducts();
-	} else if (args.j === 'replace-tokens') {
+	  
+	} else if (run === 'replace-tokens') {
 	  replaceTokens();
 
-	} else if (args.j === 'publish-products') {
+	} else if (run === 'publish-products') {
 	  publishProducts();
 
 	} else {
