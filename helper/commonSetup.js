@@ -12,7 +12,7 @@ const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
 const definitions = require(`${configFolderPath}/definitions.json`);
 
-function createDeployableProducts(flag) {
+function createDeployableProducts() {
   const catalogs = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] ? require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
 
   const products = catalogs.filter(path => path.deploy === true)
