@@ -22,34 +22,34 @@ const productSettings = require(`${configFolderPath}/products.json`);
 function setupApis() {
   fsExtra.removeSync(definitions.outputDir); // delete definitions folder before creating yamls
   let products = createDeployableProducts();
-  products.forEach(function(product) {
-    const apis = definitions.products.filter(publishProduct => publishProduct.filename === product).map(name => name.configObj.name).toString();
-    createApis(apis);
-  });
+  createApis(products);
 }
 
-function createApis(apis) {
-  const productDeploy = apis,
-    apisDefinitions = definitions.apis.filter(api => api.xIBMName === productDeploy);
-  for (let definition in apisDefinitions) {
-    const apiDefinition = apisDefinitions[definition];
-    let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
-    if (apiDefinition.templateConf) {
-      try {
-        apiConfig = loadDynamicConf(apiDefinition, apiConfig);
-      } catch (e) {
-        console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
-        throw new Error('Failed in setup API');
+function createApis(products) {
+  products.forEach(function(product) {
+    const apis = definitions.products.filter(publishProduct => publishProduct.filename === product).map(apisName => apisName.configObj.name).toString(),
+    apisDefinitions = definitions.apis.filter(api => api.xIBMName === apis);
+    
+    for (let definition in apisDefinitions) {
+      const apiDefinition = apisDefinitions[definition];
+      let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
+      if (apiDefinition.templateConf) {
+        try {
+          apiConfig = loadDynamicConf(apiDefinition, apiConfig);
+        } catch (e) {
+          console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
+          throw new Error('Failed in setup API');
+        }
       }
+      const securityDefinition = apiDefinition.security;
+      if (securityDefinition) {
+        const transformedOutput = JSON.parse(transformer(securityDefinition.template, securityDefinition.config));
+        apiConfig.securityDefinitions = transformedOutput.securityDefinitions;
+        apiConfig.security = transformedOutput.security;
+      }
+      createApiFile(apiDefinition.dest, apiConfig);
     }
-    const securityDefinition = apiDefinition.security;
-    if (securityDefinition) {
-      const transformedOutput = JSON.parse(transformer(securityDefinition.template, securityDefinition.config));
-      apiConfig.securityDefinitions = transformedOutput.securityDefinitions;
-      apiConfig.security = transformedOutput.security;
-    }
-    createApiFile(apiDefinition.dest, apiConfig);
-  }
+  });
 }
 
 function loadDynamicConf(apiDefinition, apiConfig) {

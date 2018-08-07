@@ -13,7 +13,8 @@ const env = process.env.NODE_ENV || 'development';
 const definitions = require(`${configFolderPath}/definitions.json`);
 
 function createDeployableProducts() {
-  const catalogs = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] ? require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'] : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
+ const catalogName = require(`${configFolderPath}/catalogs.json`)['&&catalogName&&']['&&spaceName&&'],
+       catalogs = catalogName ? catalogName : require(`${configFolderPath}/catalogs.json`)['&&catalogName&&'];
 
   const products = catalogs.filter(path => path.deploy === true)
     .map(name => name.productName.split('/')[1]);

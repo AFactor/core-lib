@@ -20,26 +20,25 @@ const productSettings = require(`${configFolderPath}/products.json`);
 
 function setupProducts() {
   let products = createDeployableProducts();
-  products.forEach(function(product) {
-    createProducts(product);
-  });
+  createProducts(products);
 }
 
-function createProducts(product) {
-  const productDeploy = product,
-    productDefinitions = definitions.products.filter(publishProduct => publishProduct.filename === productDeploy);
-  for (let definition in productDefinitions) {
-    const product = productDefinitions[definition];
-    let configObj = product.configObj;
-    const templateConf = product.templateConf;
-    if (templateConf) {
-      configObj = Object.assign({}, configObj, productSettings.productTemplates[templateConf].config);
+function createProducts(products) {
+  products.forEach(function(product) {
+    const productDefinitions = definitions.products.filter(publishProduct => publishProduct.filename === product);
+    for (let definition in productDefinitions) {
+      const product = productDefinitions[definition];
+      let configObj = product.configObj;
+      const templateConf = product.templateConf;
+      if (templateConf) {
+        configObj = Object.assign({}, configObj, productSettings.productTemplates[templateConf].config);
+      }
+      const json = transformer(product.template, configObj);
+      let outputYaml = convertToYAML(JSON.parse(json));
+      outputYaml = replaceLiteralTokens(outputYaml);
+      createProductFiles(product, outputYaml);
     }
-    const json = transformer(product.template, configObj);
-    let outputYaml = convertToYAML(JSON.parse(json));
-    outputYaml = replaceLiteralTokens(outputYaml);
-    createProductFiles(product, outputYaml);
-  }
+  });
 }
 
 
