@@ -26,6 +26,7 @@ try {
 
 // Replace tokens ---- replaces the variables value in the defintion folder yamls to the values from tokens present in job-configuration.json
 function replaceTokens() {
+    
     // Replace token in definition folder
     fs.readdir(definitionsFolder, (err, files) => {
         if (!err) {
