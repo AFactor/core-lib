@@ -15,12 +15,11 @@ const definitionsFolder = './definitions';
 const configFolderPath = path.resolve("./", 'urbanCode');
 const definitions = require(`${configFolderPath}/definitions.json`);
 const catalog = path.resolve("./", 'urbanCode/catalogs.json');
-let tokenValues = {},
-    resourceValues = {};
+let tokenValues = {};
+
 
 try {
     tokenValues = require(path.resolve("./", 'pipelines/conf/job-configuration.json')).environments.master.tokens;
-    resourceValues = require(path.resolve("./", 'pipelines/conf/job-configuration.json')).apiconnect;
 } catch (e) {
     console.warn('Couldn\'t require tokens. If this is not a local environment then it\'s fine.', e.message);
 }
@@ -39,8 +38,6 @@ function replaceTokens() {
             console.log('definitions folder has not been made!! Run npm run setup to update the definitions folder');
         }
     });
-    // Replace token in catalog.json
-    replaceTokenValue(catalog , resourceValues);
 };
 
 function replaceTokenValue(file , tokenValues) {
