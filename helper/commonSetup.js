@@ -12,6 +12,7 @@ const env = process.env.NODE_ENV || 'development';
 const definitions = require(`${configFolderPath}/definitions.json`);
 const catalogs = require(`${configFolderPath}/catalogs.json`);
 
+
 function createDeployableProducts() {
   let deployableProducts = [];
   for (let catalog in catalogs) {
@@ -35,7 +36,7 @@ function createDeployableProducts() {
     }
   }
   // if no product to be published break the flow
-  if(!deployableProducts.length){
+  if(deployableProducts.length === 0){
     throw new Error('No product to be published'); 
   }
 
