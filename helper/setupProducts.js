@@ -8,9 +8,9 @@ let argv = require('yargs').argv;
 const handlebars = require('handlebars');
 const merge = require('lodash').merge;
 
-const { transformer , convertToYAML , replaceLiteralTokens } = require('../helper/commonSetup.js');
+const { transformer, convertToYAML, replaceLiteralTokens, createDeployableProducts } = require('../helper/commonSetup.js');
 
-const configFolderPath = path.resolve("./",'urbanCode');
+const configFolderPath = path.resolve("./", 'urbanCode');
 const env = process.env.NODE_ENV || 'development';
 const definitions = require(`${configFolderPath}/definitions.json`);
 const apiValues = require(`${configFolderPath}/apis.json`);
@@ -19,19 +19,26 @@ const productSettings = require(`${configFolderPath}/products.json`);
 
 
 function setupProducts() {
-    const productDefinitions = definitions.products;
+  let products = createDeployableProducts();
+  createProducts(products);
+}
+
+function createProducts(products) {
+  products.forEach(function(product) {
+    const productDefinitions = definitions.products.filter(publishProduct => publishProduct.filename === product);
     for (let definition in productDefinitions) {
-        const product = productDefinitions[definition];
-        let configObj = product.configObj;
-        const templateConf = product.templateConf;
-        if (templateConf) {
-            configObj = Object.assign({}, configObj, productSettings.productTemplates[templateConf].config);
-        }
-        const json = transformer(product.template, configObj);
-        let outputYaml = convertToYAML(JSON.parse(json));
-        outputYaml = replaceLiteralTokens(outputYaml);
-        createProductFiles(product, outputYaml);
+      const product = productDefinitions[definition];
+      let configObj = product.configObj;
+      const templateConf = product.templateConf;
+      if (templateConf) {
+        configObj = Object.assign({}, configObj, productSettings.productTemplates[templateConf].config);
+      }
+      const json = transformer(product.template, configObj);
+      let outputYaml = convertToYAML(JSON.parse(json));
+      outputYaml = replaceLiteralTokens(outputYaml);
+      createProductFiles(product, outputYaml);
     }
+  });
 }
 
 
@@ -46,5 +53,5 @@ function createProductFiles(productObj, outputYaml) {
 
 
 module.exports = {
-  'setupProducts' : setupProducts
+  'setupProducts': setupProducts
 }

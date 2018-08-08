@@ -10,15 +10,24 @@ const exec = require('child_process').exec;
 const logger = require('fancy-log');
 
 
+
 const configFolderPath = path.resolve("./", 'urbanCode');
 const catalogs = require(`${configFolderPath}/catalogs.json`);
 
 
 function publishProducts() {
     for (let catalog in catalogs) {
+        let catalogName = process.env.catalog;
+        if(!catalogName){
+            throw new Error('Catalog is missing');
+        }
         if (!Array.isArray(catalogs[catalog])) {
             for (let space in catalogs[catalog]) {
-                if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}/spaces/${space}`).code === 0) {
+                let spaceName = process.env.space;
+                if(!spaceName){
+                    throw new Error('Space is missing');
+                }
+                if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}/spaces/${spaceName}`).code === 0) {
                     const products = catalogs[catalog][space];
                     publishProductWithSpace(products, apicServer, apicOrg);
                 } else {
@@ -27,7 +36,7 @@ function publishProducts() {
                 }
             }
         } else {
-            if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}`).code === 0) {
+            if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}`).code === 0) {
                 publishProductWithoutSpace(catalog, apicServer, apicOrg);
             } else {
                 logger(`Error: setting catalog to ${catalog} in organisation - ${apicOrg}`);
