@@ -15,7 +15,6 @@
     "fs-extra": "^3.0.1",
     "handlebars": "^4.0.8",
     "js-yaml": "^3.8.2",
-    "json-diff": "^0.5.2",
     "lodash": "^4.17.4",
     "swagger-tools": "^0.10.3"
   },

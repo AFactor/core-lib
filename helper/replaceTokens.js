@@ -12,6 +12,7 @@ const definitionsFolder = './definitions';
 const catalog = path.resolve('./', 'urbanCode/catalogs.json');
 let tokenValues = {};
 
+
 try {
     tokenValues = require(path.resolve('./', 'pipelines/conf/job-configuration.json')).environments.master.tokens;
 } catch (e) {
@@ -20,23 +21,22 @@ try {
 
 // Replace tokens ---- replaces the variables value in the defintion folder yamls to the values from tokens present in job-configuration.json
 function replaceTokens() {
+    
     // Replace token in definition folder
     fs.readdir(definitionsFolder, (err, files) => {
         if (!err) {
             // Iterating through all the files inside definitionsFolder folder
             files.forEach(file => {
                 file = `./definitions/${file}`; // appending correct path
-                replaceTokenValue(file);
+                replaceTokenValue(file , tokenValues);
             });
         } else {
             console.log('definitions folder has not been made!! Run npm run setup to update the definitions folder');
         }
     });
-    // Replace token in catalog.json
-    replaceTokenValue(catalog);
 };
 
-function replaceTokenValue(file) {
+function replaceTokenValue(file , tokenValues) {
     fs.readFile(file, { encoding: 'utf-8' }, function(err, data) {
         if (!err) {
             if (argv.debug) {
