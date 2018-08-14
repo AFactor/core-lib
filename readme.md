@@ -42,13 +42,13 @@ It will also publish the products.
 
 3. Remove publish-products and replace-tokens gulp dependency from the gulpfile,js. Also remove all the extra dependency which they were using . Take the reference from discovery-api repo.
 
-4. Inside job-configuration.json , add new version tokens . Eg : "DISCOVERY_PRODUCT_LYDS_VERSION" . Take the reference from discovery-api repo.
+4. Inside job-configuration.json , add new product version tokens . Eg : "DISCOVERY_PRODUCT_LYDS_VERSION" . Take the reference from discovery-api repo.
 
 5. Pass these variables of product version to definition.json. Eg:  version:"&&DISCOVERY_PRODUCT_LYDS_VERSION&&"
 
 6. In product.hbs , change {{version}} from this to {{{version}}} . Double curly braces to triple curly braces.
 
-7. In your catalogs.json , replace the catalog and space name to the "&&catalogName&&" and "&&spaceName&&" variable as these are tokenized.
+7. In your catalogs.json , the catalog names and spaces should have the same ket as we are giving in job-configurations.json.
 
-8. Inside application.groovy , add replaceTokens('j2/deployable/urbanCode/', context.config.apiconnect) below the replaceTokens('j2/deployable/urbanCode/', context.config.environments.master.tokens) so that it can pick the catalog and space name from resource property from job-configuration.json
+8. Inside application.groovy , make the changes as losyed in PR. Take the reference from discovery-api repo.
 
