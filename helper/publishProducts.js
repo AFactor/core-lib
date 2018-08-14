@@ -18,13 +18,13 @@ const catalogs = require(`${configFolderPath}/catalogs.json`);
 function publishProducts() {
     for (let catalog in catalogs) {
         let catalogName = process.env[catalog];
-        if(!catalogName){
+        if (!catalogName) {
             throw new Error('Catalog is missing');
         }
         if (!Array.isArray(catalogs[catalog])) {
             for (let space in catalogs[catalog]) {
                 let spaceName = process.env[space];
-                if(!spaceName){
+                if (!spaceName) {
                     throw new Error('Space is missing');
                 }
                 if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}/spaces/${spaceName}`).code === 0) {
@@ -52,7 +52,7 @@ function publishProductWithSpace(products, apicServer, apicOrg) {
             isDeploy = obj.deploy || false;
         if (isDeploy === true) {
             logger(`publishing product ${product} started`);
-            if (shell.exec(`apic publish -s ${apicServer} ${product} --scope space`).code !== 0) {
+            if (shell.exec(`apic publish -s ${apicServer} ${product}`).code !== 0) {
                 logger(`Error: publishing product ${product}`);
                 shell.exec(`cat ${product}`);
                 return shell.exit(1);
