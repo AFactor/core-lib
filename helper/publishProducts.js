@@ -17,13 +17,13 @@ const catalogs = require(`${configFolderPath}/catalogs.json`);
 
 function publishProducts() {
     for (let catalog in catalogs) {
-        let catalogName = process.env[catalog];
+        let catalogName = process.env[catalog].toLowerCase();
         if(!catalogName){
             throw new Error('Catalog is missing');
         }
         if (!Array.isArray(catalogs[catalog])) {
             for (let space in catalogs[catalog]) {
-                let spaceName = process.env[space];
+                let spaceName = process.env[space].toLowerCase();
                 if(!spaceName){
                     throw new Error('Space is missing');
                 }
@@ -76,7 +76,6 @@ function publishProductWithoutSpace(catalog, apicServer, apicOrg) {
             }
             logger(`publishing product ${product} finished`);
             shell.exec(`sleep ${tts}`);
-            console.log("inside true", scope);
         }
     }
 }
