@@ -145,6 +145,7 @@ function compareVersion(updatedVersion, publishedVersion) {
 function publishProducts() {
     let publishedProducts = pullVersionProducts();
     console.log("publishedProducts",publishedProducts);
+
     for (let catalog in catalogs) {
         // let catalogName = process.env[catalog];
         // if(!catalogName){
@@ -188,6 +189,7 @@ function publishProductWithSpace(products, apicServer, apicOrg) {
                 return shell.exit(1);
             }
             logger(`publishing product ${product} finished`);
+            // shell.exec(`apic products:replace ob-lbg-discovery-endpoint-lyds:1.0.1 ob-lbg-discovery-endpoint-lyds:1.0.2 --server ${apicServer} -c channel -o ${apicOrg} --plans default:default`);
             shell.exec(`sleep ${tts}`);
         }
     }
