@@ -26,6 +26,9 @@ function pullVersionProducts() {
     publishedProductsList = publishedProductsList.split(/\\n/g, );
     let products = createDeployableProducts(),
         pullProducts = pullPublishedProducts(products, publishedProductsList);
+    if (!pullProducts.length) {
+        throw new Error('check version to be published');
+    }
     return pullProducts;
 }
 
@@ -41,27 +44,28 @@ function pullPublishedProducts(products, publishedProductsList) {
                 configObj = Object.assign({}, configObj, productSettings.productTemplates[templateConf].config);
             }
             let productCatalog = filterItems(configObj.name, publishedProductsList);
-            // console.log("completeFilteredProducts",completeFilteredProducts);
-            // console.log("filteredProducts",filteredProducts);
             completeFilteredProducts = [...productCatalog, ...completeFilteredProducts];
-            console.log("completeFilteredProducts", productCatalog);
-            // shell.exec(`apic config:set catalog=apic-catalog://management01.psd2.sandbox.extranet.group/orgs/prototype/catalogs/sb`);
-            // shell.exec(`apic login -s ${apicServer} -u mohit.jain -p Lion@1234`);
-            // shell.exec(`apic products:set ${configObj.name}:1.0.0 --server ${apicServer} -c channel -o ${apicOrg} --status deprecated`);
-            // shell.exec(`apic products:get ${configObj.name} --server ${apicServer} -c channel -o ${apicOrg}`);
-            // shell.exec(`apic products:replace ${configObj.name}:1.0.0 ${configObj.name}:1.0.2 --server ${apicServer} -c channel -o ${apicOrg}`);
         }
     });
     return completeFilteredProducts;
 }
 
 function filterItems(query, products) {
-    let productCatalog = [];
+    let productCatalog = [],
+        previousProducts = [],
+        allPreviousPublishedVersion = [],
+        updatedVersion,
+        toBePublishedVersion,
+        product,
+        currentProductVersion,
+        publishedVersion,
+        versionBumpup;
+
     products.filter(function(el) {
         if (el.toLowerCase().indexOf(query.toLowerCase()) > -1) {
 
-            let product = el.split(':')[0],
-                currentProductVersion = el.split(':')[1];
+            product = el.split(':')[0];
+            currentProductVersion = el.split(':')[1];
 
             currentProductVersion = currentProductVersion.split(' ')[0];
 
@@ -77,15 +81,34 @@ function filterItems(query, products) {
             }
 
             if (publishedProductProperties.status === "published") {
-                let updatedVersion = fetchVersionProduct(query),
-                versionBumpup = compareVersion(updatedVersion.updatedVersion, currentProductVersion);
-                if(versionBumpup > 0) {
-                    productCatalog = [...productCatalog,`definitions/${updatedVersion.productName}`];
+                publishedVersion = publishedProductProperties.version;
+                updatedVersion = fetchVersionProduct(query);
+                toBePublishedVersion = updatedVersion.newVersion;
+                versionBumpup = compareVersion(toBePublishedVersion, publishedVersion);
+                if (versionBumpup > 0) {
+                    previousProducts = [...previousProducts, `${el}`]
+                    productCatalog = [...productCatalog, `definitions/${updatedVersion.productName}`];
+
                 }
             }
         }
     });
+    checkPublishedProducts(previousProducts,productCatalog,product, publishedVersion, toBePublishedVersion);
     return productCatalog;
+}
+
+function checkPublishedProducts(previousProducts,productCatalog,product, publishedVersion, toBePublishedVersion) {
+    if (productCatalog.length > 1) {
+        throw new Error(`multiple versions of same products has been published "${previousProducts}" and the current version which is to be published is ${toBePublishedVersion}, rectify this and make sure only one version of the product is published , then try again publishing the product`);
+    } else {
+        let differenceVersion = compareVersion(toBePublishedVersion, publishedVersion);
+        if (productCatalog.length && differenceVersion === 1) {
+            // publishProductsNew(toBePublishedVersion,publishedVersion,product);
+        } else {
+            throw new Error('New version should be higher by one than the already published version');
+        }
+
+    }
 }
 
 function fetchVersionProduct(query) {
@@ -95,7 +118,7 @@ function fetchVersionProduct(query) {
         fetchProduct = yaml.safeLoad(fs.readFileSync(`${definitionPath}/${productName}`, 'utf8')),
         updatedVersion = fetchProduct.info.version;
     return {
-        updatedVersion: updatedVersion,
+        newVersion: updatedVersion,
         productName: productName
     }
 
@@ -118,8 +141,10 @@ function compareVersion(updatedVersion, publishedVersion) {
     // loop while the components are equal
     for (let i = 0; i < len; i++) {
         // A bigger than B
-        if (parseInt(updatedVersion_components[i]) > parseInt(publishedVersion_components[i])) {
-            return 1;
+        if ((parseInt(updatedVersion_components[i]) > parseInt(publishedVersion_components[i]))) {
+            let differenceVersion = (parseInt(updatedVersion_components[i]) - parseInt(publishedVersion_components[i]));
+            console.log("difference", differenceVersion);
+            return differenceVersion;
         }
 
         // B bigger than A
@@ -144,8 +169,10 @@ function compareVersion(updatedVersion, publishedVersion) {
 
 function publishProducts() {
     let publishedProducts = pullVersionProducts();
-    console.log("publishedProducts",publishedProducts);
+    console.log("publishedProducts", publishedProducts);
+};
 
+function publishProductsNew(toBePublishedVersion, currentProductVersion, product) {
     for (let catalog in catalogs) {
         // let catalogName = process.env[catalog];
         // if(!catalogName){
@@ -160,7 +187,7 @@ function publishProducts() {
                 // console.log("value",shell.exec(`apic config:get space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}/spaces/${space}`).code);
                 if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}/spaces/${space}`).code === 0) {
                     const products = catalogs[catalog][space];
-                    publishProductWithSpace(products, apicServer, apicOrg);
+                    publishProductWithSpace(products, apicServer, apicOrg, toBePublishedVersion, currentProductVersion, product);
                 } else {
                     logger(`Error: setting space to ${space} in catalog ${catalog} and organisation - ${apicOrg}`);
                     return shell.exit(1);
@@ -175,9 +202,10 @@ function publishProducts() {
             }
         }
     }
-};
+}
 
-function publishProductWithSpace(products, apicServer, apicOrg) {
+function publishProductWithSpace(products, apicServer, apicOrg, toBePublishedVersion, currentProductVersion, product) {
+    let newProduct = product;
     for (let obj of products) {
         let product = obj.productName,
             isDeploy = obj.deploy || false;
@@ -189,7 +217,7 @@ function publishProductWithSpace(products, apicServer, apicOrg) {
                 return shell.exit(1);
             }
             logger(`publishing product ${product} finished`);
-            // shell.exec(`apic products:replace ob-lbg-discovery-endpoint-lyds:1.0.1 ob-lbg-discovery-endpoint-lyds:1.0.2 --server ${apicServer} -c channel -o ${apicOrg} --plans default:default`);
+            shell.exec(`apic products:replace ${newProduct}:${currentProductVersion} ${newProduct}:${toBePublishedVersion} --server ${apicServer} -c channel -o ${apicOrg} --plans default:default`);
             shell.exec(`sleep ${tts}`);
         }
     }
