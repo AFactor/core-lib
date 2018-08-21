@@ -35,7 +35,6 @@ function pullLatestPublishedVersion(product, publishedProductsList, catalog) {
 function filterProductsWithVersion(product, publishedProductsList, catalog) {
     let productCatalog = [],
         previousProducts = [],
-        allPreviousPublishedVersion = [],
         updatedVersion,
         toBePublishedVersion,
         currentProductVersion,
@@ -50,10 +49,8 @@ function filterProductsWithVersion(product, publishedProductsList, catalog) {
     publishedProductsList.filter(function(publishedProduct) {
         if (publishedProduct.toLowerCase().indexOf(product.toLowerCase()) > -1) {
 
-
-            currentProductVersion = publishedProduct.split(':')[1];
-
-            currentProductVersion = currentProductVersion.split(' ')[0];
+			currentProductVersion = publishedProduct.split(':')[1];
+			currentProductVersion = currentProductVersion.split(' ')[0];
 
             let getProductProperties = shell.exec(`apic products:get ${product}:${currentProductVersion} --server ${apicServer} -c ${catalog} -o ${apicOrg}`),
                 publishedProductProperties = {};
@@ -88,7 +85,7 @@ function filterProductsWithVersion(product, publishedProductsList, catalog) {
     }
 }
 
-// check whether the more than one version of product is published or not , if yes break the code and also checks whether the new version which is to be published is incremented by 1 from the latest published version in the catalog
+// check whether more than one version of product is published or not , if yes break the code and also checks whether the new version which is to be published is incremented by 1 from the latest published version in the catalog , if no throw the error else returns the new and already published version
 function checkPublishedProducts(previousProducts, productCatalog, publishedVersion, toBePublishedVersion) {
     let newVersion,
         oldVersion;
