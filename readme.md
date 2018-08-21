@@ -3,6 +3,7 @@ It will create all the yamls inside the definition folder .
 It will replace all the tokens in the definition folder by the urls present in job.configuration.json file !!
 It will replace the catalog name and space name inside the catlogs.json from the job-configuration.json file !!
 It will also publish the products.
+Before publishing the product , it will check the versions of the product which are already published , if the version which we want to publish is higher than the published version by 1 , it will hot replace the existing product with the new version product.
 
 1. Install the following npm module
     ``` npm install core-gateway-lib --save ```
@@ -16,6 +17,8 @@ It will also publish the products.
 5. Product version has also been tokenized. So update the job-configuration.json with those parameters accordingly.
 
 6. Run the command 'npm run publish-products'. It will publish only those products which are to be published as we have given the feature of publish individual products rather than the whole products in the artifact. This can be done by applying flag deploy:true to those products which are to be published.
+
+7. Before publishing the product , it will check the versions of the product which are already published , if the version which we want to publish is higher than the published version by 1 , it will hot replace the existing product with the new version product.
 
 
 ### Changes to be made
@@ -50,5 +53,5 @@ It will also publish the products.
 
 7. In your catalogs.json , the catalog names and spaces should have the same ket as we are giving in job-configurations.json.
 
-8. Inside application.groovy , make the changes as losyed in PR. Take the reference from discovery-api repo.
+8. Inside application.groovy , make the changes as done in PR. Take the reference from discovery-api repo.
 
