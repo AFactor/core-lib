@@ -16,36 +16,36 @@ const catalogs = require(`${configFolderPath}/catalogs.json`);
 
 function publishProducts() {
     for (let catalog in catalogs) {
-        // let catalogName = process.env[catalog].toLowerCase();
-        // if(!catalogName){
-        //     throw new Error('Catalog is missing');
-        // }
+        let catalogName = process.env[catalog].toLowerCase();
+        if(!catalogName){
+            throw new Error('Catalog is missing');
+        }
 
 
         if (!Array.isArray(catalogs[catalog])) {
             for (let space in catalogs[catalog]) {
-                // let spaceName = process.env[space].toLowerCase();
-                // if(!spaceName){
-                //     throw new Error('Space is missing');
-                // }
+                let spaceName = process.env[space].toLowerCase();
+                if(!spaceName){
+                    throw new Error('Space is missing');
+                }
 
-                let publishedProductsList = getProductsFromSpace(catalog, space);
+                let publishedProductsList = getProductsFromSpace(catalogName, spaceName);
 
-                if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}/spaces/${space}`).code === 0) {
+                if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}/spaces/${spaceName}`).code === 0) {
                     const products = catalogs[catalog][space];
-                    publishProductWithSpace(products, apicServer, apicOrg, publishedProductsList, catalog);
+                    publishProductWithSpace(products, apicServer, apicOrg, publishedProductsList, catalogName);
                 } else {
-                    logger(`Error: setting space to ${space} in catalog ${catalog} and organisation - ${apicOrg}`);
+                    logger(`Error: setting space to ${spaceName} in catalog ${catalogName} and organisation - ${apicOrg}`);
                     return shell.exit(1);
                 }
             }
         } else {
-            let publishedProductsList = getProductsFromCatalog(catalog);
+            let publishedProductsList = getProductsFromCatalog(catalogName);
 
-            if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalog}`).code === 0) {
-                publishProductWithoutSpace(catalog, apicServer, apicOrg, publishedProductsList, catalog);
+            if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}`).code === 0) {
+                publishProductWithoutSpace(catalogName, apicServer, apicOrg, publishedProductsList);
             } else {
-                logger(`Error: setting catalog to ${catalog} in organisation - ${apicOrg}`);
+                logger(`Error: setting catalog to ${catalogName} in organisation - ${apicOrg}`);
                 return shell.exit(1);
             }
         }
@@ -85,7 +85,7 @@ function publishProductWithSpace(products, apicServer, apicOrg, publishedProduct
             }
 
             logger(`publishing product ${product} finished`);
-            
+
             if (pullProducts.oldVersion.length) {
                 shell.exec(`apic products:replace ${replaceProduct}:${pullProducts.oldVersion} ${replaceProduct}:${pullProducts.newVersion} --server ${apicServer} -c ${catalog} -o ${apicOrg} --plans default:default`);
             }
@@ -94,7 +94,7 @@ function publishProductWithSpace(products, apicServer, apicOrg, publishedProduct
     }
 }
 
-function publishProductWithoutSpace(catalog, apicServer, apicOrg) {
+function publishProductWithoutSpace(catalog, apicServer, apicOrg , publishedProductsList) {
     for (let obj of catalogs[catalog]) {
         let product = obj.productName,
             isDeploy = obj.deploy || false;
