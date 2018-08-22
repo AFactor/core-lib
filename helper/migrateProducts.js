@@ -97,7 +97,7 @@ function checkPublishedProducts(previousProducts, productCatalog, publishedVersi
             newVersion = toBePublishedVersion;
             oldVersion = publishedVersion;
         } else {
-            throw new Error('New version should be higher by one than the already published version');
+            throw new Error(`New version ${toBePublishedVersion} should be higher by one than the already published version ${publishedVersion}`);
         }
 
     }
