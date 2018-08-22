@@ -107,7 +107,7 @@ function checkPublishedProducts(previousProducts, productCatalog, publishedVersi
     }
 }
 
-//Fetching the new versoon of the product which is to published from the yaml generated in the definition folder
+//Fetching the new version of the product which is to published from the yaml generated in the definition folder
 function fetchProductVersion(product) {
     let productDefinitions = definitions.products.filter(publishProduct => publishProduct.configObj.name === product),
         productName = productDefinitions[0].filename,

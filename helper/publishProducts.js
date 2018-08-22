@@ -34,7 +34,7 @@ function publishProducts() {
                     const products = catalogs[catalog][space];
                     publishProductWithSpace(products, apicServer, apicOrg, publishedProductsList, catalogName);
                 } else {
-                    logger(`Error: setting space to ${space} in catalog ${catalog} and organisation - ${apicOrg}`);
+                    logger(`Error: setting space to ${spaceName} in catalog ${catalogName} and organisation - ${apicOrg}`);
                     return shell.exit(1);
                 }
             }
@@ -42,7 +42,7 @@ function publishProducts() {
             if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}`).code === 0) {
                 publishProductWithoutSpace(catalog, apicServer, apicOrg, publishedProductsList, catalogName);
             } else {
-                logger(`Error: setting catalog to ${catalog} in organisation - ${apicOrg}`);
+                logger(`Error: setting catalog to ${catalogName} in organisation - ${apicOrg}`);
                 return shell.exit(1);
             }
         }
@@ -91,7 +91,7 @@ function publishProductWithoutSpace(catalog, apicServer, apicOrg) {
             }
 
             logger(`publishing product ${product} finished`);
-            if (pullProducts.oldVersion != '') {
+            if (pullProducts.oldVersion.length) {
                 shell.exec(`apic products:replace ${replaceProduct}:${pullProducts.oldVersion} ${replaceProduct}:${pullProducts.newVersion} --server ${apicServer} -c ${catalog} -o ${apicOrg} --plans default:default`);
             }
             shell.exec(`sleep ${tts}`);
