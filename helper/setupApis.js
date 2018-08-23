@@ -72,19 +72,25 @@ function createApiFile(name, config) {
 }
 
 function loadGatewayScripts(){
-
-  let script = require(path.resolve(definitions.gatewayScript));
-  let UglifyJS = require("uglify-es");
-  let funcs = {};
-  for (var item in script) {
-    //minify the func body
-    var result = UglifyJS.minify(script[item].toString().match(/function[^{]+\{([\s\S]*)\}$/)[1]);
-    if(!result.error){
-      funcs[item]=result.code;
-    }else {
-      throw(result.error);}
+  // if gateway scripts are defined in definitions.json/gatewayScript, it will be added, otherwise ignored.
+  if(definitions.gatewayScript){
+    let script = require(path.resolve(definitions.gatewayScript));
+    let UglifyJS = require("uglify-es");
+    let funcs = {};
+    for (var item in script) {
+      //minify the func body
+      var result = UglifyJS.minify(script[item].toString().match(/function[^{]+\{([\s\S]*)\}$/)[1]);
+      if(!result.error){
+        funcs[item]=result.code;
+      }else {
+        throw(result.error);}
+    }
+    return funcs;
+  }else{
+    //dummy value to avoid possible null exception
+    return {"js": "none"};
   }
-  return funcs;
+
 
 }
 
