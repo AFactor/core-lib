@@ -17,7 +17,7 @@ const catalogs = require(`${configFolderPath}/catalogs.json`);
 function publishProducts() {
     for (let catalog in catalogs) {
         let catalogName = process.env[catalog].toLowerCase();
-        if(!catalogName){
+        if (!catalogName) {
             throw new Error('Catalog is missing');
         }
 
@@ -25,7 +25,7 @@ function publishProducts() {
         if (!Array.isArray(catalogs[catalog])) {
             for (let space in catalogs[catalog]) {
                 let spaceName = process.env[space].toLowerCase();
-                if(!spaceName){
+                if (!spaceName) {
                     throw new Error('Space is missing');
                 }
 
@@ -33,7 +33,16 @@ function publishProducts() {
 
                 if (shell.exec(`apic config:set space=apic-space://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}/spaces/${spaceName}`).code === 0) {
                     const products = catalogs[catalog][space];
-                    publishProductWithSpace(products, apicServer, apicOrg, publishedProductsList, catalogName);
+                    let params = {
+                        'products': products,
+                        'apicServer': apicServer,
+                        'apicOrg': apicOrg,
+                        'publishedProductsList': publishedProductsList,
+                        'catalog': catalogName
+
+                    }
+
+                    publishProductWithSpace(params);
                 } else {
                     logger(`Error: setting space to ${spaceName} in catalog ${catalogName} and organisation - ${apicOrg}`);
                     return shell.exit(1);
@@ -43,7 +52,15 @@ function publishProducts() {
             let publishedProductsList = getProductsFromCatalog(catalogName);
 
             if (shell.exec(`apic config:set catalog=apic-catalog://${apicServer}/orgs/${apicOrg}/catalogs/${catalogName}`).code === 0) {
-                publishProductWithoutSpace(catalogName, apicServer, apicOrg, publishedProductsList);
+                let params = {
+                    'apicServer': apicServer,
+                    'apicOrg': apicOrg,
+                    'publishedProductsList': publishedProductsList,
+                    'catalog': catalogName
+
+                }
+
+                publishProductWithoutSpace(params);
             } else {
                 logger(`Error: setting catalog to ${catalogName} in organisation - ${apicOrg}`);
                 return shell.exit(1);
@@ -68,7 +85,13 @@ function getProductsFromCatalog(catalog) {
     return publishedProductsList;
 }
 
-function publishProductWithSpace(products, apicServer, apicOrg, publishedProductsList, catalog) {
+function publishProductWithSpace(params) {
+    let products = params.products,
+        apicServer = params.apicServer,
+        apicOrg = params.apicOrg,
+        publishedProductsList = params.publishedProductsList,
+        catalog = params.catalog;
+
     for (let obj of products) {
         let product = obj.productName,
             isDeploy = obj.deploy || false;
@@ -94,7 +117,12 @@ function publishProductWithSpace(products, apicServer, apicOrg, publishedProduct
     }
 }
 
-function publishProductWithoutSpace(catalog, apicServer, apicOrg , publishedProductsList) {
+function publishProductWithoutSpace(params) {
+    let apicServer = params.apicServer,
+        apicOrg = params.apicOrg,
+        publishedProductsList = params.publishedProductsList,
+        catalog = params.catalog;
+
     for (let obj of catalogs[catalog]) {
         let product = obj.productName,
             isDeploy = obj.deploy || false;
@@ -111,7 +139,7 @@ function publishProductWithoutSpace(catalog, apicServer, apicOrg , publishedProd
             }
 
             logger(`publishing product ${product} finished`);
-            
+
             if (pullProducts.oldVersion.length) {
                 shell.exec(`apic products:replace ${replaceProduct}:${pullProducts.oldVersion} ${replaceProduct}:${pullProducts.newVersion} --server ${apicServer} -c ${catalog} -o ${apicOrg} --plans default:default`);
             }
