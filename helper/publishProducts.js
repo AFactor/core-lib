@@ -111,6 +111,7 @@ function publishProductWithoutSpace(catalog, apicServer, apicOrg , publishedProd
             }
 
             logger(`publishing product ${product} finished`);
+            
             if (pullProducts.oldVersion.length) {
                 shell.exec(`apic products:replace ${replaceProduct}:${pullProducts.oldVersion} ${replaceProduct}:${pullProducts.newVersion} --server ${apicServer} -c ${catalog} -o ${apicOrg} --plans default:default`);
             }
