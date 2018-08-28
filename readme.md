@@ -41,11 +41,11 @@ Before publishing the product , it will check the versions of the product which 
 	  throw new Error('Argument undefined');
 	}
 
-2. update your package.json with some arguments . Take the reference from discovery-api repo.
+2. update your package.json with some arguments . Take the reference from health-check repo.
 
-3. Remove publish-products and replace-tokens gulp dependency from the gulpfile,js. Also remove all the extra dependency which they were using . Take the reference from discovery-api repo.
+3. Remove publish-products and replace-tokens gulp dependency from the gulpfile,js. Also remove all the extra dependency which they were using . Take the reference from health-check repo.
 
-4. Inside job-configuration.json , add new product version tokens . Eg : "DISCOVERY_PRODUCT_LYDS_VERSION" . Take the reference from discovery-api repo.
+4. Inside job-configuration.json , add new product version tokens . Eg : "DISCOVERY_PRODUCT_LYDS_VERSION" . Take the reference from health-check repo.
 
 5. Pass these variables of product version to definition.json. Eg:  version:"&&DISCOVERY_PRODUCT_LYDS_VERSION&&"
 
@@ -53,5 +53,39 @@ Before publishing the product , it will check the versions of the product which 
 
 7. In your catalogs.json , the catalog names and spaces should have the same ket as we are giving in job-configurations.json.
 
-8. Inside application.groovy , make the changes as done in PR. Take the reference from discovery-api repo.
+8. Inside application.groovy , make the changes as done in PR. Take the reference from health-check repo.
+
+### How should developer add new feature and use this library?
+
+1. Inside src/index.js , we are exporting only those functions which are required as of now like setup products , setupApis , replace tokens and publishing the product. 
+
+2. To add new functionality, create a file inside helper folder like other files created and export that so that it can be exported to the repos in which is it is to be used.
+
+3. Make sure we use minimum modules so that , its not become too heavy. The modules which we are using , add them to package.json dependency and the modules which are required locally , add them to devDependecy.
+
+4. If all together new functionality is created inside the module , increase the minor version like (1.2.0) from (1.1.8) and if some small code fixes and functionality are been added to existing files increase the patch version like (1.1.9) from (1.1.8). After making these changes , publish the version and make sure what are the new functionalities we are publishing in that version.
+
+5. If we have a create a new run command for the new feature or functionality we are making , we have to update inside the repo in which it is called. Like this
+	if (run === 'generate-definitions') {
+	  setupApis();
+	  setupProducts();
+	  
+	} else if (run === 'replace-tokens') {
+	  replaceTokens();
+
+	} else if (run === 'publish-products') {
+	  publishProducts();
+
+	} else {
+	  throw new Error('Argument undefined');
+	}
+
+	If the task is increasing , better to use switch case instead of if else.
+
+6. Every update of this library should contain the updated readme with the new feature we are implementing in that particular version.
+
+
+
+
+
 
