@@ -84,6 +84,8 @@ Before publishing the product , it will check the versions of the product which 
 
 6. Every update of this library should contain the updated readme with the new feature we are implementing in that particular version.
 
+7. Whatever new functionality which we embed should be synced, showcased and tested on health-check api.
+
 
 
 
