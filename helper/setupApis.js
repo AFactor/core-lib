@@ -26,6 +26,7 @@ function setupApis() {
 }
 
 function createApis(products) {
+  let scripts = loadGatewayScripts();
   products.forEach(function(product) {
     const apis = definitions.products.filter(publishProduct => publishProduct.filename === product).map(apisName => apisName.configObj.name).toString(),
     apisDefinitions = definitions.apis.filter(api => api.xIBMName === apis);
@@ -35,7 +36,7 @@ function createApis(products) {
       let apiConfig = yaml.safeLoad(fsExtra.readFileSync(path.resolve(definitions.apiDir, apiDefinition.swagger), 'utf8'));
       if (apiDefinition.templateConf) {
         try {
-          apiConfig = loadDynamicConf(apiDefinition, apiConfig);
+          apiConfig = loadDynamicConf(apiDefinition, apiConfig, scripts);
         } catch (e) {
           console.error(`Failed in API ${util.inspect(apiDefinition, utilOpts)} and the exception is ${util.inspect(e, utilOpts)}`);
           throw new Error('Failed in setup API');
@@ -52,10 +53,11 @@ function createApis(products) {
   });
 }
 
-function loadDynamicConf(apiDefinition, apiConfig) {
+function loadDynamicConf(apiDefinition, apiConfig, scripts) {
   const inputData = apiDefinition.src;
   const templateConfObj = apiValues[apiDefinition.templateConf].config;
   const configObj = Object.assign({}, apiDefinition, templateConfObj);
+  merge(configObj,scripts);
   const merged = transformer(inputData, configObj);
   const transformedOutput = yaml.safeLoad(merged);
   const dynamicConf = merge({}, apiConfig, transformedOutput);
@@ -69,6 +71,28 @@ function createApiFile(name, config) {
   writeFile.sync(filePath, finalYamlObj);
 }
 
+function loadGatewayScripts(){
+  // if gateway scripts are defined in definitions.json/gatewayScript, it will be added, otherwise ignored.
+  if(definitions.gatewayScript){
+    let script = require(path.resolve(definitions.gatewayScript));
+    let UglifyJS = require("uglify-es");
+    let funcs = {};
+    for (var item in script) {
+      //minify the func body
+      var result = UglifyJS.minify(script[item].toString().match(/function[^{]+\{([\s\S]*)\}$/)[1]);
+      if(!result.error){
+        funcs[item]=result.code;
+      }else {
+        throw(result.error);}
+    }
+    return funcs;
+  }else{
+    //dummy value to avoid possible null exception
+    return {"js": "none"};
+  }
+
+
+}
 
 //fsExtra.removeSync(definitions.outputDir); // delete definitions folder before creating yamls
 

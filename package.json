@@ -1,6 +1,6 @@
 {
   "name": "core-gateway-lib",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint 'src/**/*.js' -f table --fix",
@@ -8,17 +8,18 @@
     "move": "cp src/* ../../src/"
   },
   "dependencies": {
+    "chalk": "^2.4.1",
     "config": "^1.26.1",
+    "fancy-log": "^1.3.2",
     "fs": "0.0.1-security",
     "fs-extra": "^3.0.1",
     "handlebars": "^4.0.8",
     "js-yaml": "^3.8.2",
     "lodash": "^4.17.4",
-    "fancy-log": "^1.3.2",
-    "yargs": "^3.10.0",
-    "chalk": "^2.4.1",
+    "shelljs": "^0.7.7",
+    "uglify-es": "^3.3.9",
     "write": "^0.2.1",
-    "shelljs": "^0.7.7"
+    "yargs": "^3.10.0"
   },
   "devDependencies": {
     "apiconnect": "^2.7.111",
